@@ -1,70 +1,84 @@
 import React from 'react';
-import { Button, Grid, InputAdornment, TextField } from '@material-ui/core';
+import { Button, Grid, InputAdornment, TextField, Link, Box, CssBaseline } from '@material-ui/core';
 import { AccountCircle, LockRounded } from '@material-ui/icons';
-import JuptrLogo from './assets/logo.svg';
+import Paper from '@material-ui/core/Paper';
+import { ReactComponent as JuptrLogo } from './assets/logo.svg';
 import JupiterImg from './assets/jupiter.jpg';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
 
-import './App.css';
+const useStyles = makeStyles((theme) => ({
+  root: {
+    height: '100vh'
+  },
+  image: {
+    backgroundImage: `url(${JupiterImg})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundColor: 'whitesmoke',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  },
+  paper: {
+    margin: theme.spacing(8, 8),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  logo: {
+    margin: theme.spacing(1),
+    maxHeight: 250
+  },
+  loginSection: {
+    backgroundColor: 'whitesmoke'
+  },
+  form: {
+    width: '100%',
+    marginTop: theme.spacing(1),
+  }
+}));
 
 const App: React.FC = () => {
+  const classes = useStyles();
   return (
-    <div style={{ background: 'whitesmoke', overflowY: 'hidden', overflowX: 'hidden' }}>
-      <Grid container style={{ minHeight: '100vh' }}>
-        <Grid item xs={12} sm={6}>
-          <img 
-            src={JupiterImg} 
-            style={{ width: '100%', height: '100%', objectFit: 'cover'}} 
-            alt="brand" 
-          />
-        </Grid>
-        <Grid 
-          container 
-          item xs={12} 
-          sm={6} 
-          alignItems="center" 
-          direction="column" 
-          justifyContent="space-between" 
-          style={{padding: 10}}
-        >
-          <div />
-          <div style={{ maxWidth: 400, minWidth: 300 }}>
-            <Grid container justifyContent="center">
-              <img src={JuptrLogo} width={200} alt="logo" />
-            </Grid>
-            <Grid container direction="column" >
-              <TextField 
-                label="Username" 
-                margin="normal" 
-                InputProps={{ 
-                  startAdornment: (<InputAdornment position="start"><AccountCircle /></InputAdornment>) 
-                }}  
-              />
-              <TextField
+    <Grid container component="main" className={classes.root}>
+      <CssBaseline />
+      <Grid item xs={false} sm={4} md={6} className={classes.image} />
+      <Grid item xs={12} sm={8} md={6} className={classes.loginSection } component={Paper} elevation={6} square>
+        <div className={classes.paper}>
+          <JuptrLogo className={classes.logo} />
+          <form className={classes.form} noValidate>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              InputProps={{ 
+                startAdornment: (<InputAdornment position="start"><AccountCircle /></InputAdornment>) 
+              }}  
+            />
+            <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
                 type="password"
-                label="Password" 
-                margin="normal" 
-                InputProps={{ 
+                id="password"
+                autoComplete="current-password"
+                InputProps={{
                   startAdornment: (<InputAdornment position="start"><LockRounded /></InputAdornment>) 
                 }}  
               />
-              <div style={{ height: 20 }} /> 
-              <Button color="primary" variant="contained">
-                Log In
-              </Button>
-              <div style={{ height: 20 }} />
-              <Button color="primary" variant="outlined">
-                Register
-              </Button>
-              <div style={{ height: 20 }} />
-              <Button color="primary" variant="outlined">
-                Register
-              </Button>
-            </Grid>
-          </div> 
-          <div />
-        </Grid>
+          </form>
+        </div>
       </Grid>
-    </div>
+    </Grid>
   );
 }
 
