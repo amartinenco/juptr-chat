@@ -1,24 +1,69 @@
 import React from 'react';
-import logo from './logo.svg';
+import { Button, Grid, InputAdornment, TextField } from '@material-ui/core';
+import { AccountCircle, LockRounded } from '@material-ui/icons';
+import JuptrLogo from './assets/logo.svg';
+import JupiterImg from './assets/jupiter.jpg';
+
 import './App.css';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div style={{ background: 'whitesmoke', overflowY: 'hidden', overflowX: 'hidden' }}>
+      <Grid container style={{ minHeight: '100vh' }}>
+        <Grid item xs={12} sm={6}>
+          <img 
+            src={JupiterImg} 
+            style={{ width: '100%', height: '100%', objectFit: 'cover'}} 
+            alt="brand" 
+          />
+        </Grid>
+        <Grid 
+          container 
+          item xs={12} 
+          sm={6} 
+          alignItems="center" 
+          direction="column" 
+          justifyContent="space-between" 
+          style={{padding: 10}}
         >
-          Learn React
-        </a>
-      </header>
+          <div />
+          <div style={{ maxWidth: 400, minWidth: 300 }}>
+            <Grid container justifyContent="center">
+              <img src={JuptrLogo} width={200} alt="logo" />
+            </Grid>
+            <Grid container direction="column" >
+              <TextField 
+                label="Username" 
+                margin="normal" 
+                InputProps={{ 
+                  startAdornment: (<InputAdornment position="start"><AccountCircle /></InputAdornment>) 
+                }}  
+              />
+              <TextField
+                type="password"
+                label="Password" 
+                margin="normal" 
+                InputProps={{ 
+                  startAdornment: (<InputAdornment position="start"><LockRounded /></InputAdornment>) 
+                }}  
+              />
+              <div style={{ height: 20 }} /> 
+              <Button color="primary" variant="contained">
+                Log In
+              </Button>
+              <div style={{ height: 20 }} />
+              <Button color="primary" variant="outlined">
+                Register
+              </Button>
+              <div style={{ height: 20 }} />
+              <Button color="primary" variant="outlined">
+                Register
+              </Button>
+            </Grid>
+          </div> 
+          <div />
+        </Grid>
+      </Grid>
     </div>
   );
 }
