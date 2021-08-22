@@ -1,124 +1,17 @@
 import React from 'react';
-import { Button, Grid, InputAdornment, TextField, Link, CssBaseline } from '@material-ui/core';
-import { AccountCircle, LockRounded } from '@material-ui/icons';
-import Paper from '@material-ui/core/Paper';
-import { ReactComponent as JuptrLogo } from './assets/logo.svg';
-import JupiterImg from './assets/jupiter.jpg';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import { Switch, Route } from 'react-router-dom';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    height: '100vh'
-  },
-  image: {
-    backgroundImage: `url(${JupiterImg})`,
-    backgroundRepeat: 'no-repeat',
-    backgroundColor: 'whitesmoke',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-  },
-  loginSection: {
-    backgroundColor: 'whitesmoke'
-  },
-  paper: {
-    margin: theme.spacing(8, 8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  logo: {
-    margin: theme.spacing(1),
-    minHeight: 100,
-    maxHeight: 250
-  },
-  signIn: {
-    width: '100%', 
-    maxWidth: 500,
-    paddingLeft: theme.spacing(1)
-  },
-  form: {
-    maxWidth: 500,
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(2, 0, 1),
-  },
-  register: {
-    margin: theme.spacing(1, 0, 1),
-  }
-}));
+import LoginPage from './pages/login-page/login-page.component';
+import Registration from './pages/registration/registration.component';
 
 const App: React.FC = () => {
-  const classes = useStyles();
   return (
-    <Grid container component="main" className={classes.root}>
-      <CssBaseline />
-      <Grid item xs={false} sm={4} md={6} className={classes.image} />
-      <Grid item xs={12} sm={8} md={6} className={classes.loginSection } component={Paper} elevation={6} square alignItems="center">
-        <div className={classes.paper}>
-          <JuptrLogo className={classes.logo} />
-          <Typography component="h1" variant="h5" className={classes.signIn}>
-            Sign in
-          </Typography>
-          <form className={classes.form} noValidate>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              type="email"
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              InputProps={{
-                spellCheck: 'false', 
-                startAdornment: (<InputAdornment position="start"><AccountCircle /></InputAdornment>) 
-              }}
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              InputProps={{
-                startAdornment: (<InputAdornment position="start"><LockRounded /></InputAdornment>) 
-              }}  
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
-              Sign In
-            </Button>
-            <Button 
-              fullWidth 
-              variant="outlined" 
-              color="primary" 
-              className={classes.register}>
-                Register
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  {"Forgot password?"}
-                </Link>
-              </Grid>
-            </Grid>
-          </form>
-        </div>
-      </Grid>
-    </Grid>
+    <div>
+      <Switch>
+        <Route exact path='/' component={LoginPage} />
+        <Route exact path='/signup' component={Registration} />
+      </Switch>
+    </div>
   );
 }
 
