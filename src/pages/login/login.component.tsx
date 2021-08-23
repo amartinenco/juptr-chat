@@ -6,17 +6,16 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 
 import { ReactComponent as JuptrLogo } from '../../assets/logo.svg';
-import loginPageStyles from './login-page.styles';
+import loginStyles from './login.styles';
 
-
-const LoginPage: React.FC = () => {
-    const classes = loginPageStyles();
+const Login: React.FC = () => {
+    const classes = loginStyles();
 
     return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <Grid item xs={false} sm={4} md={6} className={classes.image} />
-      <Grid item xs={12} sm={8} md={6} className={classes.loginSection } component={Paper} elevation={6} square alignItems="center">
+      <Grid item xs={12} sm={8} md={6} className={classes.loginSection } component={Paper} elevation={6} square>
         <div className={classes.paper}>
           <JuptrLogo className={classes.logo} />
           <Typography component="h1" variant="h5" className={classes.signIn}>
@@ -83,4 +82,4 @@ const LoginPage: React.FC = () => {
   );
 }
 
-export default LoginPage;
+export default Login;

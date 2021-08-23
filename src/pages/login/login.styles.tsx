@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 import JupiterImg from '../../assets/jupiter.jpg';
 
-const loginPageStyles = makeStyles((theme) => ({
+const loginStyles = makeStyles((theme) => ({
     root: {
       height: '100vh'
     },
@@ -43,4 +43,4 @@ const loginPageStyles = makeStyles((theme) => ({
     }
 }));
 
-export default loginPageStyles;
+export default loginStyles;
