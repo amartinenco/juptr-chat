@@ -51,7 +51,7 @@ const SignUp: React.FC = () => {
                             name="confirmPassword"
                             label="Confirm Password"
                             type="password"
-                            id="password"
+                            id="passwordConfirm"
                         />
                         <Button
                             type="submit"
@@ -59,7 +59,7 @@ const SignUp: React.FC = () => {
                             variant="contained"
                             color="primary"
                             className={classes.submit}
-                            >
+                        >
                             Sign Up
                         </Button>
                     </form>
