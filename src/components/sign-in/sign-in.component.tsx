@@ -19,24 +19,16 @@ const SignIn: React.FC = () => {
         setCredentials({ ...userCredentials, [name]: value });
 
         if (name === 'email') {
-            if (event.target.value.length > 0) {
-                if (!validator.isEmail(event.target.value)) {
-                    setErrors({ ...errors, email: 'Invalid email' });
-                } else {
-                    setErrors({ ...errors, email: '' });
-                }
+            if (value.length > 0 && !validator.isEmail(value)) {
+                setErrors({ ...errors, email: 'Invalid email' });
             } else {
                 setErrors({ ...errors, email: '' });
             }
         }
 
         if (name === 'password') {
-            if (event.target.value.length > 0) {
-                if (event.target.value.length < 8) {
-                    setErrors({ ...errors, password: 'Passwords must be at least 8 characters long' });
-                } else {
-                    setErrors({ ...errors, password: '' });
-                }
+            if (value.length > 0 && value.length < 8) {
+                setErrors({ ...errors, password: 'Passwords must be at least 8 characters long' });
             } else {
                 setErrors({ ...errors, password: '' });
             }
