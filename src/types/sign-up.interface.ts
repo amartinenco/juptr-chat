@@ -1,4 +1,4 @@
-interface RegisterCredentials {
+interface IRegisterCredentials {
     [key: string]: number | string | boolean | undefined;
     email: string,
     displayName: string,
@@ -7,4 +7,4 @@ interface RegisterCredentials {
     confirmPassword: string
 }
 
-export default RegisterCredentials;
+export default IRegisterCredentials;

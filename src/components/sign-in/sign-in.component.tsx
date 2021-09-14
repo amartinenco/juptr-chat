@@ -9,10 +9,23 @@ import validator from 'validator';
 import { ReactComponent as JuptrLogo } from '../../assets/logo.svg';
 import signInStyles from './sign-in.styles';
 
+import useRequest from '../../hooks/use-request.hook';
+import LoggedIn from '../../types/logged-in.interface';
+
 const SignIn: React.FC = () => {
     const [errors, setErrors] = React.useState<{ email: string, password: string }>({ email: '', password: '' });
     const [userCredentials, setCredentials] = React.useState<{ email: string, password: string }>({ email: '', password: '' });
     const { email, password } = userCredentials;
+
+    const { doRequest } = useRequest({
+        url: 'http://localhost:5000/v1/auth/signin',
+        method: 'post',
+        body: {
+          email,
+          password
+        },
+        onSuccess: (data: LoggedIn) => console.log('success', data)
+    });
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
@@ -35,9 +48,9 @@ const SignIn: React.FC = () => {
         }
     };
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log(email, password);
+        await doRequest();
     }
 
     const classes = signInStyles();
