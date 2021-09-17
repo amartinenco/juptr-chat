@@ -1,8 +1,9 @@
+import IResponseError from "../types/error.interface";
 import ILoggedIn from "../types/logged-in.interface";
 
 export type AuthState = {
-  user: ILoggedIn;
-  errorMessage?: string;
+  user?: ILoggedIn;
+  errorMessage?: IResponseError;
   loading?: boolean;
 }
 
@@ -24,8 +25,8 @@ export enum AuthActionTypes {
 
 export type AuthAction = {
   type: AuthActionTypes;
-  payload: { user: ILoggedIn};
-  error: string;
+  payload?: { user: ILoggedIn};
+  error?: IResponseError;
 }
 
 

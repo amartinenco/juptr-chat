@@ -10,7 +10,7 @@ export const AuthReducer = (state: AuthState, action: AuthAction) : AuthState =>
 		case AuthActionTypes.LOGIN_SUCCESS:
 			return {
 				...state,
-				user: action.payload.user,
+				user: action.payload?.user,
 				loading: false,
 			};
 		case AuthActionTypes.LOGOUT:
@@ -22,8 +22,7 @@ export const AuthReducer = (state: AuthState, action: AuthAction) : AuthState =>
 					fullName: '',
 					id: '' 
 				}
-			};
-
+			}
 		case AuthActionTypes.LOGIN_ERROR:
 			return {
 				...state,
@@ -36,7 +35,6 @@ export const AuthReducer = (state: AuthState, action: AuthAction) : AuthState =>
 				loading: false,
 				errorMessage: action.error,
 			};
-
 		default:
 			throw new Error(`Unhandled action type: ${action.type}`);
 	}

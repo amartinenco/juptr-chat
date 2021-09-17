@@ -1,9 +1,5 @@
 import { Method } from "axios";
-
-export interface ICredentials {
-    email: string;
-    password: string;
-}
+import { ICredentials } from "./credentials.interface";
 
 export interface IUseRequest {
     url: string,
