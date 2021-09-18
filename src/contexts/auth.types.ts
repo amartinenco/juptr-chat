@@ -13,6 +13,11 @@ export const authInitialState : AuthState = {
     email: '',
     fullName: '',
     id: '' 
+  },
+  loading: false,
+  errorMessage: {
+    msg: '',
+    param: ''
   }
 }
 
@@ -20,7 +25,8 @@ export enum AuthActionTypes {
   REQUEST_LOGIN = 'REQUEST_LOGIN',
   LOGIN_SUCCESS = 'LOGIN_SUCCESS',
   LOGIN_ERROR = 'LOGIN_ERROR',
-  LOGOUT = 'LOGOUT'
+  LOGOUT = 'LOGOUT',
+  CHECK_USER_SESSION = 'CHECK_USER_SESSION'
 };
 
 export type AuthAction = {

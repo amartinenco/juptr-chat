@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Button, Grid, InputAdornment, TextField, Link } from '@material-ui/core';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, RouteComponentProps, withRouter } from 'react-router-dom';
 import { AccountCircle, LockRounded } from '@material-ui/icons';
 import Typography from '@material-ui/core/Typography';
 import validator from 'validator';
@@ -14,7 +14,11 @@ import LoggedIn from '../../types/logged-in.interface';
 import { useAuthDispatch, useAuthState } from '../../contexts/auth.context';
 import { loginUser } from '../../contexts/auth.actions';
 
-const SignIn: React.FC = () => {
+// interface ChildComponentProps extends RouteComponentProps<any> {
+//     /* other props for ChildComponent */
+// }
+
+const SignIn: React.FC<RouteComponentProps<any>> = ({ history }) => {
     const [errors, setErrors] = React.useState<{ email: string, password: string }>({ email: '', password: '' });
     const [userCredentials, setCredentials] = React.useState<{ email: string, password: string }>({ email: '', password: '' });
     const { email, password } = userCredentials;
@@ -55,17 +59,13 @@ const SignIn: React.FC = () => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        // await doRequest();
-        
 		try {
 		    let response = await loginUser(dispatch, { email, password });
 			if (!response?.data.displayName) return;
-			// props.history.push('/dashboard');
-            console.log('Success');
+            history.push('/chat-app');
 		} catch (error: any) {
 			console.log(error);
 		}
-
     }
 
     const classes = signInStyles();
@@ -76,6 +76,10 @@ const SignIn: React.FC = () => {
             <Typography component="h1" variant="h5" className={classes.signIn}>
                 Sign in
             </Typography>
+          
+            {JSON.stringify(errorMessage)}
+            
+
             <form className={classes.form} onSubmit={handleSubmit} noValidate>
                 <TextField
                     variant="outlined"
@@ -117,7 +121,7 @@ const SignIn: React.FC = () => {
                     variant="contained"
                     color="primary"
                     className={classes.submit}
-                    disabled={Boolean(email?.length! === 0 || password?.length! === 0 || errors?.email || errors?.password)}
+                    disabled={Boolean(email?.length! === 0 || password?.length! === 0 || errors?.email || errors?.password || loading)}
                 >
                     Sign In
                 </Button>
@@ -144,4 +148,4 @@ const SignIn: React.FC = () => {
     );
 }
 
-export default SignIn;
+export default withRouter(SignIn);

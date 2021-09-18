@@ -12,6 +12,9 @@ export const AuthReducer = (state: AuthState, action: AuthAction) : AuthState =>
 				...state,
 				user: action.payload?.user,
 				loading: false,
+				errorMessage: {
+					msg: ''
+				},
 			};
 		case AuthActionTypes.LOGOUT:
 			return {
@@ -21,7 +24,11 @@ export const AuthReducer = (state: AuthState, action: AuthAction) : AuthState =>
 					email: '',
 					fullName: '',
 					id: '' 
-				}
+				},
+				loading: false,
+				errorMessage: {
+					msg: ''
+				},
 			}
 		case AuthActionTypes.LOGIN_ERROR:
 			return {
@@ -34,6 +41,10 @@ export const AuthReducer = (state: AuthState, action: AuthAction) : AuthState =>
 				},
 				loading: false,
 				errorMessage: action.error,
+			};
+		case AuthActionTypes.CHECK_USER_SESSION:
+			return {
+				...state
 			};
 		default:
 			throw new Error(`Unhandled action type: ${action.type}`);

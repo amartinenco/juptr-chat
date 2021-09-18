@@ -7,7 +7,6 @@ import loginStyles from './login.styles';
 import SignIn from '../../components/sign-in/sign-in.component';
 import { useLocation  } from 'react-router-dom';
 
-
 const Login: React.FC = (props) => {
 
   const classes = loginStyles();

@@ -26,6 +26,7 @@ export async function loginUser(dispatch: Dispatch<AuthAction>, loginPayload: IC
     return response;
   } catch (error: any) {
     if (error.response.data.errors) {
+      console.log(error.response.data.errors);
       dispatch({ 
         type: AuthActionTypes.LOGIN_ERROR,
         error: error.response.data.errors[0]
@@ -38,4 +39,8 @@ export async function loginUser(dispatch: Dispatch<AuthAction>, loginPayload: IC
 
 export async function logout(dispatch : Dispatch<AuthAction>) {
 	dispatch({ type: AuthActionTypes.LOGOUT });
+}
+
+export async function checkUserSession(dispatch: Dispatch<AuthAction>) {
+  dispatch({ type: AuthActionTypes.CHECK_USER_SESSION });
 }
