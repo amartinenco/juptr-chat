@@ -1,4 +1,5 @@
-import React, { useReducer } from 'react';
+import React, { useEffect, useReducer } from 'react';
+import { checkUserSession } from './auth.actions';
 import { AuthReducer } from './auth.reducer';
 import { AuthAction, authInitialState } from './auth.types';
 
@@ -28,7 +29,12 @@ type Props = {
 }
 
 export const AuthProvider = ({ children }: Props) => {
+
 	const [state, dispatch] = useReducer(AuthReducer, authInitialState);
+	
+  useEffect(() => {
+		(async () => { await checkUserSession(dispatch) })();
+	}, [dispatch]);
 
 	return (
 		<AuthStateContext.Provider value={state}>

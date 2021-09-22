@@ -44,7 +44,14 @@ export const AuthReducer = (state: AuthState, action: AuthAction) : AuthState =>
 			};
 		case AuthActionTypes.CHECK_USER_SESSION:
 			return {
-				...state
+				...state,
+				loading: true,
+			};
+		case AuthActionTypes.CURRENT_USER_SESSION:
+			return {
+				...state,
+				user: action.payload?.user,
+				loading: false
 			};
 		default:
 			throw new Error(`Unhandled action type: ${action.type}`);

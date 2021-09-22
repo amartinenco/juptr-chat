@@ -9,14 +9,8 @@ import validator from 'validator';
 import { ReactComponent as JuptrLogo } from '../../assets/logo.svg';
 import signInStyles from './sign-in.styles';
 
-import useRequest from '../../hooks/use-request.hook';
-import LoggedIn from '../../types/logged-in.interface';
 import { useAuthDispatch, useAuthState } from '../../contexts/auth.context';
 import { loginUser } from '../../contexts/auth.actions';
-
-// interface ChildComponentProps extends RouteComponentProps<any> {
-//     /* other props for ChildComponent */
-// }
 
 const SignIn: React.FC<RouteComponentProps<any>> = ({ history }) => {
     const [errors, setErrors] = React.useState<{ email: string, password: string }>({ email: '', password: '' });
@@ -24,17 +18,7 @@ const SignIn: React.FC<RouteComponentProps<any>> = ({ history }) => {
     const { email, password } = userCredentials;
 
 	const dispatch = useAuthDispatch();
-	const { loading, errorMessage } = useAuthState();
-
-    // const { doRequest } = useRequest({
-    //     url: 'http://localhost:5000/v1/auth/signin',
-    //     method: 'post',
-    //     body: {
-    //       email,
-    //       password
-    //     },
-    //     onSuccess: (data: LoggedIn) => console.log('success', data)
-    // });
+	const { loading, errorMessage, user } = useAuthState();
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
@@ -78,7 +62,6 @@ const SignIn: React.FC<RouteComponentProps<any>> = ({ history }) => {
             </Typography>
           
             {JSON.stringify(errorMessage)}
-            
 
             <form className={classes.form} onSubmit={handleSubmit} noValidate>
                 <TextField

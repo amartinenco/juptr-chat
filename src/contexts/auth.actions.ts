@@ -13,11 +13,11 @@ export async function loginUser(dispatch: Dispatch<AuthAction>, loginPayload: IC
     const response: AxiosResponse<ILoggedIn> = await axios({ 
       url: `${ROOT_URL}/v1/auth/signin`, 
       method: 'POST',
-      data: loginPayload
+      data: loginPayload,
+      withCredentials: true
     });
 
     if (response.data && response.data.displayName) {
-      console.log(response.data);
       dispatch({ 
         type: AuthActionTypes.LOGIN_SUCCESS,
         payload: { user: response.data }
@@ -42,5 +42,22 @@ export async function logout(dispatch : Dispatch<AuthAction>) {
 }
 
 export async function checkUserSession(dispatch: Dispatch<AuthAction>) {
-  dispatch({ type: AuthActionTypes.CHECK_USER_SESSION });
+  try {
+    dispatch({ type: AuthActionTypes.CHECK_USER_SESSION }) ;
+    const response = await axios({ 
+      url: `${ROOT_URL}/v1/auth/currentuser`, 
+      method: 'GET',
+      withCredentials: true
+    });
+    if (response.data) {
+      const { currentUser:  { id, displayName, email, fullName } } = response.data;
+      dispatch({ 
+        type: AuthActionTypes.CURRENT_USER_SESSION,
+        payload: { user : {id, displayName, email, fullName} }
+      });
+    }
+    return response;
+  } catch (error: any) {
+    dispatch({ type: AuthActionTypes.LOGOUT });
+  }
 }

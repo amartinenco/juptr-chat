@@ -14,7 +14,7 @@ export const authInitialState : AuthState = {
     fullName: '',
     id: '' 
   },
-  loading: false,
+  loading: true,
   errorMessage: {
     msg: '',
     param: ''
@@ -26,7 +26,8 @@ export enum AuthActionTypes {
   LOGIN_SUCCESS = 'LOGIN_SUCCESS',
   LOGIN_ERROR = 'LOGIN_ERROR',
   LOGOUT = 'LOGOUT',
-  CHECK_USER_SESSION = 'CHECK_USER_SESSION'
+  CHECK_USER_SESSION = 'CHECK_USER_SESSION',
+  CURRENT_USER_SESSION = 'CURRENT_USER_SESSION'
 };
 
 export type AuthAction = {
