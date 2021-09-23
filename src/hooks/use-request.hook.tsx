@@ -15,7 +15,7 @@ const useRequest = ({url, method, body, onSuccess}: IUseRequest) => {
         onSuccess(response.data); 
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
 

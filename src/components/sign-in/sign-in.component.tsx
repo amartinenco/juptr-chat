@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Button, Grid, InputAdornment, TextField, Link } from '@material-ui/core';
 import { Link as RouterLink, RouteComponentProps, withRouter } from 'react-router-dom';
 import { AccountCircle, LockRounded } from '@material-ui/icons';
 import Typography from '@material-ui/core/Typography';
+import Alert from '@material-ui/lab/Alert';
 import validator from 'validator';
 
 import { ReactComponent as JuptrLogo } from '../../assets/logo.svg';
 import signInStyles from './sign-in.styles';
 
 import { useAuthDispatch, useAuthState } from '../../contexts/auth.context';
-import { loginUser } from '../../contexts/auth.actions';
+import { loginUser, resetErrors } from '../../contexts/auth.actions';
 
 const SignIn: React.FC<RouteComponentProps<any>> = ({ history }) => {
     const [errors, setErrors] = React.useState<{ email: string, password: string }>({ email: '', password: '' });
@@ -18,7 +19,11 @@ const SignIn: React.FC<RouteComponentProps<any>> = ({ history }) => {
     const { email, password } = userCredentials;
 
 	const dispatch = useAuthDispatch();
-	const { loading, errorMessage, user } = useAuthState();
+	const { loading, errorMessage } = useAuthState();
+
+    useEffect(()=>{
+        resetErrors(dispatch);
+    },[dispatch]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
@@ -59,11 +64,13 @@ const SignIn: React.FC<RouteComponentProps<any>> = ({ history }) => {
             <JuptrLogo className={classes.logo} />
             <Typography component="h1" variant="h5" className={classes.signIn}>
                 Sign in
-            </Typography>
-          
-            {JSON.stringify(errorMessage)}
-
+            </Typography>         
             <form className={classes.form} onSubmit={handleSubmit} noValidate>
+            {
+            (errorMessage[0] && errorMessage[0].msg)? 
+                <Alert severity="error">{errorMessage[0].msg}</Alert>
+                : null
+            }
                 <TextField
                     variant="outlined"
                     margin="normal"
@@ -119,13 +126,13 @@ const SignIn: React.FC<RouteComponentProps<any>> = ({ history }) => {
                 >
                     Register
                 </Button>
-                <Grid container>
+                {/* <Grid container>
                     <Grid item xs>
                         <Link component={RouterLink} to="/password_reset" variant="body2">
                             {"Forgot password?"}
                         </Link>
                     </Grid>
-                </Grid>
+                </Grid> */}
             </form>
         </div>
     );

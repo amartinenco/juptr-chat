@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import signUpStyles from './sign-up.styles';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, RouteComponentProps, withRouter } from 'react-router-dom';
 import validator from 'validator';
 
 import { ReactComponent as JuptrLogo } from '../../assets/logo.svg';
 import RegisterCredentials from '../../types/sign-up.interface';
+import { registerUser, resetErrors } from '../../contexts/auth.actions';
+import { useAuthDispatch, useAuthState } from '../../contexts/auth.context';
 
 const resetCredentials = {
     email: '',
@@ -19,11 +21,33 @@ const resetCredentials = {
     confirmPassword: ''
 }
 
-const SignUp: React.FC = () => {
+const SignUp: React.FC<RouteComponentProps<any>> = ({ history }) => {
 
     const [errors, setErrors] = React.useState<RegisterCredentials>(resetCredentials);
     const [userCredentials, setCredentials] = React.useState<RegisterCredentials>(resetCredentials);
-    const { email, displayName, password, confirmPassword } = userCredentials;
+    const { email, displayName, fullName, password, confirmPassword } = userCredentials;
+
+    const dispatch = useAuthDispatch();
+	const { errorMessage } = useAuthState();
+
+    useEffect(()=>{
+        resetErrors(dispatch);
+    },[dispatch]);
+
+    useEffect(() => {
+        if (errorMessage && errorMessage.length > 0) {
+            let err:any = {};
+            errorMessage.forEach((errObj:any, i:any) => {
+                // console.log(errObj);
+                if (errObj.param) {
+                    err[errObj.param!] = errObj.msg!;
+                }
+            });
+            setErrors(e => {
+                return { ...e, ...err }
+            });
+        }
+    }, [errorMessage]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
@@ -42,8 +66,8 @@ const SignUp: React.FC = () => {
         }
 
         if (name === 'displayName') {
-            if (!/^[a-zA-Z._0-9]*$/g.test(value)) {
-                setErrors({ ...errors, displayName: 'Only letters, numbers, underscore and dots allowed.'});
+            if (!/^[a-zA-Z._0-9]*$/g.test(value) || value.length < 6) {
+                setErrors({ ...errors, displayName: 'Only letters, numbers, underscore and dots allowed. (min length 6)'});
             } else {
                 setErrors({ ...errors, displayName: ''});
             }
@@ -78,6 +102,17 @@ const SignUp: React.FC = () => {
         }
     };
 
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+		try {
+		    let response = await registerUser(dispatch, { email, displayName, fullName, password, confirmPassword });
+            if (!response?.data.displayName) return;
+            history.push('/signin');
+		} catch (error: any) {
+			// console.log(error);
+		}
+    }
+
     const classes = signUpStyles();
     return (    
         <div className={classes.paper}>
@@ -85,7 +120,7 @@ const SignUp: React.FC = () => {
             <Typography component="h1" variant="h5">
                 Sign Up
             </Typography>
-            <form className={classes.form} noValidate>
+            <form className={classes.form} onSubmit={handleSubmit} noValidate>
                 <TextField
                     variant="outlined"
                     margin="normal"
@@ -102,6 +137,7 @@ const SignUp: React.FC = () => {
                     }}
                     onChange={handleChange}
                     error={Boolean(errors?.email)}
+                    helperText={errors.email}
                 />
                 <TextField
                     variant="outlined"
@@ -118,6 +154,7 @@ const SignUp: React.FC = () => {
                     }}
                     onChange={handleChange}
                     error={Boolean(errors?.displayName)}
+                    helperText={errors.displayName}
                 />
                 <TextField
                     variant="outlined"
@@ -136,6 +173,7 @@ const SignUp: React.FC = () => {
                     }}
                     onChange={handleChange}
                     error={Boolean(errors?.fullName)}
+                    helperText={errors.fullName}
                 />
                 <TextField
                     variant="outlined"
@@ -149,6 +187,7 @@ const SignUp: React.FC = () => {
                     autoComplete="current-password"
                     onChange={handleChange}
                     error={Boolean(errors?.password)}
+                    helperText={errors.password}
                 />
                 <TextField
                     variant="outlined"
@@ -162,6 +201,7 @@ const SignUp: React.FC = () => {
                     autoComplete="new-password"
                     onChange={handleChange}
                     error={Boolean(errors?.confirmPassword)}
+                    helperText={errors.confirmPassword}
                 />                
                 <Button
                     type="submit"
@@ -189,4 +229,4 @@ const SignUp: React.FC = () => {
     );
 }
 
-export default SignUp;
+export default withRouter(SignUp);

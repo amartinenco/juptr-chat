@@ -3,13 +3,14 @@ import { AuthAction, AuthActionTypes } from './auth.types';
 import { ICredentials } from '../types/credentials.interface';
 import axios, { AxiosResponse } from 'axios';
 import ILoggedIn from '../types/logged-in.interface';
+import IRegisterCredentials from '../types/sign-up.interface';
 
 const ROOT_URL = 'http://localhost:5000';
 
 export async function loginUser(dispatch: Dispatch<AuthAction>, loginPayload: ICredentials) {
 
   try {
-    dispatch({ type: AuthActionTypes.REQUEST_LOGIN }) ;
+    dispatch({ type: AuthActionTypes.REQUEST_LOGIN });
     const response: AxiosResponse<ILoggedIn> = await axios({ 
       url: `${ROOT_URL}/v1/auth/signin`, 
       method: 'POST',
@@ -26,15 +27,45 @@ export async function loginUser(dispatch: Dispatch<AuthAction>, loginPayload: IC
     return response;
   } catch (error: any) {
     if (error.response.data.errors) {
-      console.log(error.response.data.errors);
       dispatch({ 
         type: AuthActionTypes.LOGIN_ERROR,
-        error: error.response.data.errors[0]
+        error: error.response.data.errors
       });
     } else {
       throw new Error('Request failed');
     }
   }
+}
+
+export async function registerUser(dispatch: Dispatch<AuthAction>, registerPayload: IRegisterCredentials) {
+  try {
+    dispatch({ type: AuthActionTypes.REQUEST_REGISTRATION });
+    const response: AxiosResponse<ILoggedIn> = await axios({ 
+      url: `${ROOT_URL}/v1/auth/signup`, 
+      method: 'POST',
+      data: registerPayload
+    });
+
+    if (response.data && response.data.displayName) {
+      dispatch({ 
+        type: AuthActionTypes.REGISTRATION_SUCCESS
+      });
+    }
+    return response;
+  } catch (error: any) {
+    if (error.response.data.errors) {
+      dispatch({ 
+        type: AuthActionTypes.REGISTRATION_ERROR,
+        error: error.response.data.errors
+      });
+    } else {
+      throw new Error('Request failed');
+    }
+  }
+}
+
+export async function resetErrors(dispatch : Dispatch<AuthAction>) {
+  dispatch({ type: AuthActionTypes.RESET_ERRORS });
 }
 
 export async function logout(dispatch : Dispatch<AuthAction>) {

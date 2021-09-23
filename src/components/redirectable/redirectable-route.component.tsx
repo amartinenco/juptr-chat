@@ -2,7 +2,10 @@ import React from "react";
 import { Redirect, Route, RouteComponentProps, RouteProps } from "react-router-dom";
 import { useAuthState } from "../../contexts/auth.context";
 
-const ProtectedRoute = ({ component, ...rest }: RouteProps) => {
+interface Props extends RouteProps {
+  redirectTo: string;
+}
+const RedirectableRoute = ({ component, redirectTo, ...rest }: Props) => {
   
 	const { loading, user } = useAuthState();
 
@@ -13,13 +16,14 @@ const ProtectedRoute = ({ component, ...rest }: RouteProps) => {
   const Component = component;
 
   const render = (props: RouteComponentProps<any>): React.ReactNode => {
-    if (user?.displayName && user?.id && !loading) {      
+    if (user?.displayName && user?.id && !loading) {  
+      return <Redirect to={{ pathname: redirectTo }} />
+    } else {
       return <Component {...props} />;
     }
-    return <Redirect to={{ pathname: '/signin' }} />
   };
-
+  
   return (<Route {...rest} render={render} />);
 }
 
-export default ProtectedRoute;
+export default RedirectableRoute;

@@ -1,9 +1,9 @@
 import { CircularProgress } from '@material-ui/core';
-import React, { Suspense, lazy, useEffect } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import React, { Suspense, lazy } from 'react';
+import { Switch } from 'react-router-dom';
+import RedirectableRoute from './components/redirectable/redirectable-route.component';
 import ProtectedRoute from './components/routes/protected-route.component';
-import { checkUserSession } from './contexts/auth.actions';
-import { AuthProvider, useAuthDispatch, useAuthState } from './contexts/auth.context';
+import { AuthProvider } from './contexts/auth.context';
 
 const Login = lazy(() => import('./pages/login/login.component'));
 const Registration = lazy(() => import('./pages/sign-up/registration.component'));
@@ -16,9 +16,9 @@ const App: React.FC = () => {
       <Switch>
         <Suspense fallback={<CircularProgress />}>
           <AuthProvider>
-            <Route exact path='/' component={Login} />
-            <Route exact path='/signin' component={Login} />
-            <Route exact path='/signup' component={Registration} />
+            <RedirectableRoute exact path='/' component={Login} redirectTo='/chat-app' />
+            <RedirectableRoute exact path='/signin' component={Login} redirectTo='/chat-app'/>
+            <RedirectableRoute exact path='/signup' component={Registration} redirectTo='/chat-app'/>
             <ProtectedRoute exact path='/chat-app' component={ChatApp} />
           </AuthProvider>
         </Suspense>

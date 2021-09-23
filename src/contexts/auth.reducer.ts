@@ -2,6 +2,11 @@ import {AuthActionTypes, AuthAction, AuthState } from './auth.types';
 
 export const AuthReducer = (state: AuthState, action: AuthAction) : AuthState => {
 	switch (action.type) {
+		case AuthActionTypes.RESET_ERRORS:
+			return {
+				...state,
+				errorMessage: [],
+			};
 		case AuthActionTypes.REQUEST_LOGIN:
 			return {
 				...state,
@@ -12,9 +17,7 @@ export const AuthReducer = (state: AuthState, action: AuthAction) : AuthState =>
 				...state,
 				user: action.payload?.user,
 				loading: false,
-				errorMessage: {
-					msg: ''
-				},
+				errorMessage: [],
 			};
 		case AuthActionTypes.LOGOUT:
 			return {
@@ -26,10 +29,8 @@ export const AuthReducer = (state: AuthState, action: AuthAction) : AuthState =>
 					id: '' 
 				},
 				loading: false,
-				errorMessage: {
-					msg: ''
-				},
-			}
+				errorMessage: []
+			};
 		case AuthActionTypes.LOGIN_ERROR:
 			return {
 				...state,
@@ -40,7 +41,7 @@ export const AuthReducer = (state: AuthState, action: AuthAction) : AuthState =>
 					id: '' 
 				},
 				loading: false,
-				errorMessage: action.error,
+				errorMessage: action.error!,
 			};
 		case AuthActionTypes.CHECK_USER_SESSION:
 			return {
@@ -52,6 +53,23 @@ export const AuthReducer = (state: AuthState, action: AuthAction) : AuthState =>
 				...state,
 				user: action.payload?.user,
 				loading: false
+			};
+		case AuthActionTypes.REQUEST_REGISTRATION:
+			return {
+				...state,
+				loading: true,
+			};
+		case AuthActionTypes.REGISTRATION_SUCCESS:
+			return {
+				...state,
+				loading: false,
+				errorMessage: []
+			};
+		case AuthActionTypes.REGISTRATION_ERROR:
+			return {
+				...state,
+				loading: false,
+				errorMessage: action.error!,
 			};
 		default:
 			throw new Error(`Unhandled action type: ${action.type}`);
