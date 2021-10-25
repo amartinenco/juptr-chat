@@ -15,12 +15,12 @@ const App: React.FC = () => {
     <div>
       <Switch>
         <Suspense fallback={<CircularProgress />}>
-          <AuthProvider>
+          {/* <AuthProvider> */}
             <RedirectableRoute exact path='/' component={Login} redirectTo='/chat-app' />
             <RedirectableRoute exact path='/signin' component={Login} redirectTo='/chat-app'/>
             <RedirectableRoute exact path='/signup' component={Registration} redirectTo='/chat-app'/>
             <ProtectedRoute exact path='/chat-app' component={ChatApp} />
-          </AuthProvider>
+          {/* </AuthProvider> */}
         </Suspense>
       </Switch>
     </div>
