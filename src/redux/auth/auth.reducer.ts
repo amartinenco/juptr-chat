@@ -1,19 +1,47 @@
-import {AuthActionTypes, AuthAction, AuthState } from './auth.types';
+import IResponseError from '../../types/error.interface';
+import ILoggedIn from '../../types/logged-in.interface';
+import {AuthActionTypes, AuthState } from './auth.types';
 
-const AuthReducer = (state: AuthState, action: AuthAction) : AuthState => {
+interface IAuthAction {
+  type: AuthActionTypes;
+	payload?: any;
+}
+
+export const authInitialState : AuthState = {
+  user: null,
+  loading: false,
+  errorMessage: []
+}
+
+const AuthReducer = (state: AuthState = authInitialState, action: IAuthAction) : AuthState => {
 	switch (action.type) {
+		case AuthActionTypes.RESET_ERRORS: 
+			return {
+				...state,
+				errorMessage: []
+			}
 		case AuthActionTypes.SIGN_IN_SUCCESS:
 			return {
 				...state,
-				user: action.payload?.user,
+				user: action.payload,
 				loading: false,
 				errorMessage: []
 			};
+		case AuthActionTypes.SIGN_IN_START:
+			return {
+				...state,
+				loading: true
+			};
 		case AuthActionTypes.SIGN_OUT_SUCCESS:
 			return {
-				user: action.payload?.user,
+				user: null,
 				loading: false,
 				errorMessage: []
+			};
+		case AuthActionTypes.REGISTRATION_START:
+			return {
+				...state,
+				loading: true
 			};
 		case AuthActionTypes.REGISTRATION_SUCCESS:
 			return {
@@ -27,7 +55,7 @@ const AuthReducer = (state: AuthState, action: AuthAction) : AuthState => {
 			return {
 				...state,
 				loading: false,
-				errorMessage: action.error!
+				errorMessage: (action.payload)?action.payload:[] 
 			};
 		default:
 			return state;

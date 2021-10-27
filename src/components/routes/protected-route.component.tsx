@@ -1,10 +1,12 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Redirect, Route, RouteComponentProps, RouteProps } from "react-router-dom";
-import { useAuthState } from "../../contexts/auth.context";
+import { AuthState } from "../../redux/auth/auth.types";
 
 const ProtectedRoute = ({ component, ...rest }: RouteProps) => {
   
-	const { loading, user } = useAuthState();
+  const user = useSelector((state: AuthState) => state.user);
+  const loading = useSelector((state: AuthState) => state.loading);
 
   if (!component) {
     throw Error("component is undefined");

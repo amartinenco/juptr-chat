@@ -2,20 +2,9 @@ import IResponseError from "../../types/error.interface";
 import ILoggedIn from "../../types/logged-in.interface";
 
 export type AuthState = {
-  user?: ILoggedIn;
+  user?: ILoggedIn | null;
   errorMessage: IResponseError[];
   loading: boolean;
-}
-
-export const authInitialState : AuthState = {
-  user: {
-    displayName: '',
-    email: '',
-    fullName: '',
-    id: '' 
-  },
-  loading: true,
-  errorMessage: []
 }
 
 export enum AuthActionTypes {
@@ -46,11 +35,16 @@ export enum AuthActionTypes {
   // RESET_ERRORS = 'RESET_ERRORS'
 };
 
-export type AuthAction = {
-  type: AuthActionTypes;
-  payload?: { user: ILoggedIn};
-  error?: IResponseError[];
-}
+// export type AuthAction = {
+//   type: AuthActionTypes;
+//   payload?: { user: ILoggedIn};
+//   error?: IResponseError[];
+// }
 
 
-
+// interface ILoggedIn {
+//   displayName: string;
+//   email: string;
+//   fullName: string;
+//   id: string;
+// }

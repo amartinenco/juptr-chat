@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer } from 'react';
-import { checkUserSession } from './auth.actions';
+import { checkUserSession } from './auth.actions.ts.bk';
 import { AuthReducer } from './auth.reducer';
 import { AuthAction, authInitialState } from './auth.types';
 

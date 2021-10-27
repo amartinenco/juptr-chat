@@ -10,8 +10,8 @@ import validator from 'validator';
 
 import { ReactComponent as JuptrLogo } from '../../assets/logo.svg';
 import RegisterCredentials from '../../types/sign-up.interface';
-import { registerUser, resetErrors } from '../../contexts/auth.actions';
-import { useAuthDispatch, useAuthState } from '../../contexts/auth.context';
+// import { registerUser, resetErrors } from '../../contexts/auth.actions';
+// import { useAuthDispatch, useAuthState } from '../../contexts/auth.context';
 
 const resetCredentials = {
     email: '',
@@ -27,27 +27,27 @@ const SignUp: React.FC<RouteComponentProps<any>> = ({ history }) => {
     const [userCredentials, setCredentials] = React.useState<RegisterCredentials>(resetCredentials);
     const { email, displayName, fullName, password, confirmPassword } = userCredentials;
 
-    const dispatch = useAuthDispatch();
-	const { errorMessage } = useAuthState();
+    // const dispatch = useAuthDispatch();
+	// const { errorMessage } = useAuthState();
 
-    useEffect(()=>{
-        resetErrors(dispatch);
-    },[dispatch]);
+    // useEffect(()=>{
+    //     // resetErrors(dispatch);
+    // },[dispatch]);
 
-    useEffect(() => {
-        if (errorMessage && errorMessage.length > 0) {
-            let err:any = {};
-            errorMessage.forEach((errObj:any, i:any) => {
-                // console.log(errObj);
-                if (errObj.param) {
-                    err[errObj.param!] = errObj.msg!;
-                }
-            });
-            setErrors(e => {
-                return { ...e, ...err }
-            });
-        }
-    }, [errorMessage]);
+    // useEffect(() => {
+    //     if (errorMessage && errorMessage.length > 0) {
+    //         let err:any = {};
+    //         errorMessage.forEach((errObj:any, i:any) => {
+    //             // console.log(errObj);
+    //             if (errObj.param) {
+    //                 err[errObj.param!] = errObj.msg!;
+    //             }
+    //         });
+    //         setErrors(e => {
+    //             return { ...e, ...err }
+    //         });
+    //     }
+    // }, [errorMessage]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
@@ -104,13 +104,13 @@ const SignUp: React.FC<RouteComponentProps<any>> = ({ history }) => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-		try {
-		    let response = await registerUser(dispatch, { email, displayName, fullName, password, confirmPassword });
-            if (!response?.data.displayName) return;
-            history.push('/signin');
-		} catch (error: any) {
-			// console.log(error);
-		}
+		// try {
+		//     let response = await registerUser(dispatch, { email, displayName, fullName, password, confirmPassword });
+        //     if (!response?.data.displayName) return;
+        //     history.push('/signin');
+		// } catch (error: any) {
+		// 	// console.log(error);
+		// }
     }
 
     const classes = signUpStyles();
