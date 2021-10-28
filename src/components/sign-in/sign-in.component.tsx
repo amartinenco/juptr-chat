@@ -10,19 +10,28 @@ import validator from 'validator';
 import { ReactComponent as JuptrLogo } from '../../assets/logo.svg';
 import signInStyles from './sign-in.styles';
 
-import { useAuthDispatch, useAuthState } from '../../contexts/auth.context';
-import { loginUser, resetErrors } from '../../contexts/auth.actions';
+import { useSelector, useDispatch } from 'react-redux';
+import { AuthState } from '../../redux/auth/auth.types';
+import { RootState } from '../../redux/store';
+import { clearAuthErrors, signInStart } from '../../redux/auth/auth.actions';
+
+// import { useAuthDispatch, useAuthState } from '../../contexts/auth.context';
+// import { loginUser, resetErrors } from '../../contexts/auth.actions';
 
 const SignIn: React.FC<RouteComponentProps<any>> = ({ history }) => {
     const [errors, setErrors] = React.useState<{ email: string, password: string }>({ email: '', password: '' });
     const [userCredentials, setCredentials] = React.useState<{ email: string, password: string }>({ email: '', password: '' });
     const { email, password } = userCredentials;
 
-	const dispatch = useAuthDispatch();
-	const { loading, errorMessage } = useAuthState();
+    const errorMessage = useSelector((state : RootState) => state.user.errorMessage);
+    const loading = useSelector((state : RootState) => state.user.loading);
+    const dispatch = useDispatch();
+
+	// const dispatch = useAuthDispatch();
+	// const { loading, errorMessage } = useAuthState();
 
     useEffect(()=>{
-        resetErrors(dispatch);
+        dispatch(clearAuthErrors());
     },[dispatch]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,13 +57,14 @@ const SignIn: React.FC<RouteComponentProps<any>> = ({ history }) => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-		try {
-		    let response = await loginUser(dispatch, { email, password });
-			if (!response?.data.displayName) return;
-            history.push('/chat-app');
-		} catch (error: any) {
-			console.log(error);
-		}
+		// try {
+		//     let response = await loginUser(dispatch, { email, password });
+		// 	if (!response?.data.displayName) return;
+        //     history.push('/chat-app');
+		// } catch (error: any) {
+		// 	console.log(error);
+		// }
+        dispatch(signInStart(userCredentials));
     }
 
     const classes = signInStyles();

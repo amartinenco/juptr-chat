@@ -1,16 +1,16 @@
 import React from 'react';
-import { useAuthState } from '../../contexts/auth.context';
+// import { useAuthState } from '../../contexts/auth.context';
 
 import chatAppStyles from './chat-app.styles';
 
 const ChatApp: React.FC = () => {
 
-	const { user } = useAuthState();
+	// const { user } = useAuthState();
 
     return (
         <div>
-            {JSON.stringify(user)}
-            Chat App
+            {/* {JSON.stringify(user)} */}
+            <p>Chat App</p>
         </div>
     );
 }

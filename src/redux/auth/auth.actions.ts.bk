@@ -1,9 +1,9 @@
 import { Dispatch } from 'react';
 import { AuthAction, AuthActionTypes } from './auth.types';
-import { ICredentials } from '../types/credentials.interface';
+import { ICredentials } from '../../types/credentials.interface';
 import axios, { AxiosResponse } from 'axios';
-import ILoggedIn from '../types/logged-in.interface';
-import IRegisterCredentials from '../types/sign-up.interface';
+import ILoggedIn from '../../types/logged-in.interface';
+import IRegisterCredentials from '../../types/sign-up.interface';
 
 const ROOT_URL = 'http://localhost:5000';
 

@@ -1,13 +1,21 @@
 import React from "react";
 import { Redirect, Route, RouteComponentProps, RouteProps } from "react-router-dom";
-import { useAuthState } from "../../contexts/auth.context";
+// import { useAuthState } from "../../contexts/auth.context";
+import { useSelector } from 'react-redux';
+import { RootState } from "../../redux/store";
 
 interface Props extends RouteProps {
   redirectTo: string;
 }
 const RedirectableRoute = ({ component, redirectTo, ...rest }: Props) => {
-  
-	const { loading, user } = useAuthState();
+
+
+  const user = useSelector((state : RootState) => state.user.user);
+  const loading = useSelector((state : RootState) => state.user.loading);
+
+  // console.log(user);
+  // console.log(loading);
+	// const { loading, user } = useAuthState();
 
   if (!component) {
     throw Error("component is undefined");
