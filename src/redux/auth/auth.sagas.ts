@@ -3,7 +3,7 @@ import { ICredentials } from "../../types/credentials.interface";
 import IResponseError from "../../types/error.interface";
 import ILoggedIn from "../../types/logged-in.interface";
 import IRegisterCredentials from "../../types/sign-up.interface";
-import { checkUserSession, registrationFailure, registrationSuccess, signInFailure, signInSuccess, signOutFailure, signOutStart, signOutSuccess } from "./auth.actions";
+import { checkUserSessionFailure, checkUserSessionSuccess, registrationFailure, registrationSuccess, signInFailure, signInSuccess, signOutFailure, signOutStart, signOutSuccess } from "./auth.actions";
 import { AuthActionTypes } from "./auth.types";
 import { checkCurrentUserSession, loginUser, logoutUser, registerUser } from "./auth.utils";
 
@@ -11,9 +11,9 @@ export function* isUserAuthenticated() {
   try {
     const user : ILoggedIn  = yield call(checkCurrentUserSession);
     if (!user) return;
-    yield put(checkUserSession(user));
+    yield put(checkUserSessionSuccess(user));
   } catch (error) {
-    yield put(signOutStart());
+    yield put(checkUserSessionFailure());
   }
 }
 
@@ -40,7 +40,8 @@ export function* signUp({type, payload}:
   try {
     const registeredUser: ILoggedIn = yield call(registerUser, payload);
     if (!registeredUser) return;
-    yield put(registrationSuccess());
+    yield put(registrationSuccess(registeredUser));
+    // yield put(signInSuccess(registeredUser));
   } catch(error: any) {
     const errors : IResponseError[] = error.response.data.errors;
     yield put(registrationFailure(errors));
@@ -58,6 +59,24 @@ export function* signOut() {
   }
 }
 
+// export function* signInAfterRegistration({type, payload}:
+//   { 
+//     type: typeof AuthActionTypes.REGISTRATION_SUCCESS
+//     payload: ILoggedIn
+//   }) {
+//     try {
+//       const user = payload;
+//       if (!user) return;
+//       yield put(signInSuccess(user));
+//     } catch(error) {
+//       yield put(signInFailure([]));
+//     }
+// }
+
+// export function* onSignUpSuccess() {
+//   yield takeLatest(AuthActionTypes.REGISTRATION_SUCCESS, signInAfterRegistration);
+// }
+
 export function* onSignUpStart() {
   yield takeLatest(AuthActionTypes.REGISTRATION_START, signUp);
 }
@@ -70,8 +89,8 @@ export function* onSignOutStart() {
   yield takeLatest(AuthActionTypes.SIGN_OUT_START, signOut);
 }
 
-export function* onCheckUserSession() {
-  yield takeLatest(AuthActionTypes.CURRENT_USER_SESSION, isUserAuthenticated);
+export function* onCheckUserSessionStart() {
+  yield takeLatest(AuthActionTypes.CURRENT_USER_SESSION_START, isUserAuthenticated);
 }
 
 export function* authSagas() {
@@ -79,6 +98,6 @@ export function* authSagas() {
     call(onSignInStart),
     call(onSignUpStart),
     call(onSignOutStart),
-    call(onCheckUserSession),  
+    call(onCheckUserSessionStart),
   ]);
 };

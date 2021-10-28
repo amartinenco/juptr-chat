@@ -10,7 +10,7 @@ const ChatApp: React.FC = () => {
     return (
         <div>
             {/* {JSON.stringify(user)} */}
-            Chat App
+            <p>Chat App</p>
         </div>
     );
 }

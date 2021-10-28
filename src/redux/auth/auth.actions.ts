@@ -33,9 +33,17 @@ export const signOutFailure = (errors : IResponseError[]) => ({
   payload: errors
 });
 
-export const checkUserSession = (currentUser : ILoggedIn) => ({
-  type: AuthActionTypes.CURRENT_USER_SESSION,
-  payload: { user : currentUser }
+export const checkUserSessionStart = () => ({
+  type: AuthActionTypes.CURRENT_USER_SESSION_START
+});
+
+export const checkUserSessionSuccess = (user : ILoggedIn) => ({
+  type: AuthActionTypes.CURRENT_USER_SESSION_SUCCESS,
+  payload: user
+});
+
+export const checkUserSessionFailure = () => ({
+  type: AuthActionTypes.CURRENT_USER_SESSION_FAILURE
 });
 
 export const registrationStart = (registerCredentials: IRegisterCredentials) => ({
@@ -43,8 +51,9 @@ export const registrationStart = (registerCredentials: IRegisterCredentials) => 
   payload: registerCredentials
 });
 
-export const registrationSuccess = () => ({
-  type: AuthActionTypes.REGISTRATION_SUCCESS
+export const registrationSuccess = (registeredUser : ILoggedIn) => ({
+  type: AuthActionTypes.REGISTRATION_SUCCESS,
+  payload: registeredUser
 });
 
 export const registrationFailure = (error : IResponseError[]) => ({

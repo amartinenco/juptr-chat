@@ -15,6 +15,17 @@ export const authInitialState : AuthState = {
 
 const AuthReducer = (state: AuthState = authInitialState, action: IAuthAction) : AuthState => {
 	switch (action.type) {
+		case AuthActionTypes.CURRENT_USER_SESSION_START:
+			return {
+				...state,
+				loading: true,
+			};
+		case AuthActionTypes.CURRENT_USER_SESSION_SUCCESS:
+			return {
+				...state,
+				loading: false,
+				user: action.payload
+			};
 		case AuthActionTypes.RESET_ERRORS: 
 			return {
 				...state,
@@ -47,6 +58,14 @@ const AuthReducer = (state: AuthState = authInitialState, action: IAuthAction) :
 			return {
 				...state,
 				loading: false,
+				errorMessage: [],
+				user: action.payload
+			};
+		case AuthActionTypes.CURRENT_USER_SESSION_FAILURE:
+			return {
+				...state,
+				loading: false,
+				user: null,
 				errorMessage: []
 			};
 		case AuthActionTypes.SIGN_IN_FAILURE:

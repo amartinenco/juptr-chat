@@ -10,6 +10,9 @@ import validator from 'validator';
 
 import { ReactComponent as JuptrLogo } from '../../assets/logo.svg';
 import RegisterCredentials from '../../types/sign-up.interface';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import { clearAuthErrors, registrationStart } from '../../redux/auth/auth.actions';
 // import { registerUser, resetErrors } from '../../contexts/auth.actions';
 // import { useAuthDispatch, useAuthState } from '../../contexts/auth.context';
 
@@ -27,27 +30,31 @@ const SignUp: React.FC<RouteComponentProps<any>> = ({ history }) => {
     const [userCredentials, setCredentials] = React.useState<RegisterCredentials>(resetCredentials);
     const { email, displayName, fullName, password, confirmPassword } = userCredentials;
 
+    const errorMessage = useSelector((state : RootState) => state.user.errorMessage);
+    const loading = useSelector((state : RootState) => state.user.loading);
+    const dispatch = useDispatch();
+
     // const dispatch = useAuthDispatch();
 	// const { errorMessage } = useAuthState();
 
-    // useEffect(()=>{
-    //     // resetErrors(dispatch);
-    // },[dispatch]);
+    useEffect(()=>{
+        dispatch(clearAuthErrors());
+    },[dispatch]);
 
-    // useEffect(() => {
-    //     if (errorMessage && errorMessage.length > 0) {
-    //         let err:any = {};
-    //         errorMessage.forEach((errObj:any, i:any) => {
-    //             // console.log(errObj);
-    //             if (errObj.param) {
-    //                 err[errObj.param!] = errObj.msg!;
-    //             }
-    //         });
-    //         setErrors(e => {
-    //             return { ...e, ...err }
-    //         });
-    //     }
-    // }, [errorMessage]);
+    useEffect(() => {
+        if (errorMessage && errorMessage.length > 0) {
+            let err:any = {};
+            errorMessage.forEach((errObj:any, i:any) => {
+                // console.log(errObj);
+                if (errObj.param) {
+                    err[errObj.param!] = errObj.msg!;
+                }
+            });
+            setErrors(e => {
+                return { ...e, ...err }
+            });
+        }
+    }, [errorMessage]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value, name } = event.target;
@@ -111,6 +118,7 @@ const SignUp: React.FC<RouteComponentProps<any>> = ({ history }) => {
 		// } catch (error: any) {
 		// 	// console.log(error);
 		// }
+        dispatch(registrationStart({ email, displayName, fullName, password, confirmPassword }));
     }
 
     const classes = signUpStyles();
@@ -212,7 +220,7 @@ const SignUp: React.FC<RouteComponentProps<any>> = ({ history }) => {
                     disabled={
                         Boolean(Object.keys(errors).filter((key: string) => {
                             return errors[key] !== ''    
-                        }).length > 0 || !email || !displayName || !password || !confirmPassword)
+                        }).length > 0 || !email || !displayName || !password || !confirmPassword || loading)
                     }
                 >
                     Sign Up

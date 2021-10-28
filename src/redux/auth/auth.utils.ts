@@ -52,7 +52,8 @@ export async function registerUser(registerPayload: IRegisterCredentials) {
     const response = await axios({ 
       url: `${ROOT_URL}/v1/auth/signup`, 
       method: 'POST',
-      data: registerPayload
+      data: registerPayload,
+      withCredentials: true
     });
     const { id, displayName, email, fullName } = response.data;
     return { id, displayName, email, fullName };
