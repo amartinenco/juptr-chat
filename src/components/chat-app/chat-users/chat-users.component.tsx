@@ -7,20 +7,25 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import TextField from '@material-ui/core/TextField';
 import React from 'react';
+import ILoggedIn from '../../../types/logged-in.interface';
 import chatUsersStyles from './chat-users.styles';
 
-const ChatUsers: React.FC = () => {
+interface Props {
+  user?: ILoggedIn | null | undefined;
+}
+
+const ChatUsers: React.FC<Props> = ({ user } : Props) => {
   const classes = chatUsersStyles();
   return (
     <React.Fragment>
-      <List>
-        <ListItem button key="RemySharp">
-          <ListItemIcon>
-          <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/3.jpg" />
-          </ListItemIcon>
-          <ListItemText primary="John Wick"></ListItemText>
-        </ListItem>
-      </List>
+      {/* <List> */}
+      <ListItem button key={user?.displayName}>
+        <ListItemIcon>
+        <Avatar alt={user?.displayName} src="#" />
+        </ListItemIcon>
+        <ListItemText primary={ "(" + user?.displayName + ")" + user?.fullName }></ListItemText>
+      </ListItem>
+      {/* </List> */}
       <Divider />
       <Grid item xs={12} style={{padding: '10px'}}>
         <TextField id="outlined-basic-email" label="Search" variant="outlined" fullWidth />

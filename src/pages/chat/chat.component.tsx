@@ -15,7 +15,6 @@ const Chat: React.FC = () => {
 
   const user = useSelector((state: RootState) => state.user.user);
 
-  
   useEffect(()=>{
     connectWithWebSocket();
   },[]);
@@ -25,7 +24,7 @@ const Chat: React.FC = () => {
       <ChatAppBar />
       <Grid container component={Paper} className={classes.chatSection}>
         <Grid item xs={2} className={classes.borderRight}>
-          <ChatUsers />
+          <ChatUsers user={user} />
         </Grid>
         <Grid item xs={6} className={classes.borderRight}>
           <ChatDirectCall />
