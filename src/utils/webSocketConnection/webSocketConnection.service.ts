@@ -1,7 +1,9 @@
 import socketClient, { Socket } from 'socket.io-client';
 import { signOutStart } from '../../redux/auth/auth.actions';
+import { setActiveUsers } from '../../redux/chat/chat.actions';
 import store from '../../redux/store';
 import ILoggedIn from '../../types/logged-in.interface';
+import { BROADCAST, IBroadcastData } from './webSocket.types';
 
 const SERVER = 'http://localhost:5000';
 
@@ -13,12 +15,17 @@ export const connectWithWebSocket = () => {
   });
   
   socket.on('connect', () => {
+    console.log('Connected');
     registerNewUser(socket.id)
+  });
+
+  socket.on('broadcast', (data) => {
+    broadcastHandler(data);
   });
 
   socket.on('connect_error', err => {
     socket.disconnect();
-    store.dispatch(signOutStart());
+    // store.dispatch(signOutStart());
   });
 }
 
@@ -33,3 +40,14 @@ const registerNewUser = (socketId: string) => {
     });
   }
 }
+
+const broadcastHandler = (data: IBroadcastData) => {
+  switch (data.event) {
+    case BROADCAST.ACTIVE_USERS:
+      const activeUsers = data.payload;
+      store.dispatch(setActiveUsers(activeUsers));
+      break;
+    default:
+      break;
+  }
+} 

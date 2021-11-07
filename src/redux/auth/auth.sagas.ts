@@ -27,8 +27,14 @@ export function* signIn({type, payload}:
     if (!user) return;
     yield put(signInSuccess(user));
   } catch (error: any) {
-    const errors : IResponseError[] = error.response.data.errors;
-    yield put(signInFailure(errors));
+    if (error.response) {
+      const errors : IResponseError[] = error.response.data.errors;
+      yield put(signInFailure(errors));
+    } else {
+      yield put(signInFailure([{
+        msg: 'Login Service Unavailable'
+      }]));
+    }
   }
 }
 
@@ -43,8 +49,15 @@ export function* signUp({type, payload}:
     yield put(registrationSuccess(registeredUser));
     // yield put(signInSuccess(registeredUser));
   } catch(error: any) {
-    const errors : IResponseError[] = error.response.data.errors;
-    yield put(registrationFailure(errors));
+    if (error.response) {
+      const errors : IResponseError[] = error.response.data.errors;
+      yield put(registrationFailure(errors));
+    } else {
+      yield put(registrationFailure([{
+        msg: 'Registration Service Unavailable',
+        param: 'offline'
+      }]));
+    }
   }
 }
 

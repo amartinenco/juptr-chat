@@ -7,50 +7,33 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import TextField from '@material-ui/core/TextField';
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
 import ILoggedIn from '../../../types/logged-in.interface';
+import ChatUserItem from './chat-user-item/chat-user-item.component';
 import chatUsersStyles from './chat-users.styles';
 
-interface Props {
-  user?: ILoggedIn | null | undefined;
-}
-
-const ChatUsers: React.FC<Props> = ({ user } : Props) => {
+// interface Props {
+//   user?: ILoggedIn | null | undefined;
+// }
+// const ChatUsers: React.FC<Props> = ({ user } : Props) => {
+const ChatUsers: React.FC = () => {
   const classes = chatUsersStyles();
+  const user = useSelector((state: RootState) => state.user.user);
+  const activeUsers = useSelector((state: RootState) => state.chat.activeUsers);
+
   return (
     <React.Fragment>
-      {/* <List> */}
-      <ListItem button key={user?.displayName}>
-        <ListItemIcon>
-        <Avatar alt={user?.displayName} src="#" />
-        </ListItemIcon>
-        <ListItemText primary={ "(" + user?.displayName + ")" + user?.fullName }></ListItemText>
-      </ListItem>
-      {/* </List> */}
+      <ChatUserItem displayName={user?.displayName} fullName={user?.fullName} key={'currentUser'} />
       <Divider />
       <Grid item xs={12} style={{padding: '10px'}}>
         <TextField id="outlined-basic-email" label="Search" variant="outlined" fullWidth />
       </Grid>
       <Divider />
       <List>
-        <ListItem button key="RemySharp">
-            <ListItemIcon>
-                <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/1.jpg" />
-            </ListItemIcon>
-            <ListItemText primary="Remy Sharp">Remy Sharp</ListItemText>
-            <ListItemText secondary="online" ></ListItemText>
-        </ListItem>
-        <ListItem button key="Alice">
-            <ListItemIcon>
-                <Avatar alt="Alice" src="https://material-ui.com/static/images/avatar/3.jpg" />
-            </ListItemIcon>
-            <ListItemText primary="Alice">Alice</ListItemText>
-        </ListItem>
-        <ListItem button key="CindyBaker">
-          <ListItemIcon>
-              <Avatar alt="Cindy Baker" src="https://material-ui.com/static/images/avatar/2.jpg" />
-          </ListItemIcon>
-          <ListItemText primary="Cindy Baker">Cindy Baker</ListItemText>
-        </ListItem>
+        {activeUsers.filter((activeUser) => activeUser !== user?.displayName).map((activeUser, index) => 
+        <ChatUserItem displayName={activeUser} key={index} />
+        )}
       </List>
     </React.Fragment>
   );

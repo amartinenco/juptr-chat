@@ -13,6 +13,8 @@ import RegisterCredentials from '../../types/sign-up.interface';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { clearAuthErrors, registrationStart } from '../../redux/auth/auth.actions';
+
+import Alert from '@material-ui/lab/Alert';
 // import { registerUser, resetErrors } from '../../contexts/auth.actions';
 // import { useAuthDispatch, useAuthState } from '../../contexts/auth.context';
 
@@ -128,6 +130,13 @@ const SignUp: React.FC<RouteComponentProps<any>> = ({ history }) => {
             <Typography component="h1" variant="h5">
                 Sign Up
             </Typography>
+
+            {
+            (errorMessage[0]?.param && errorMessage[0].param === 'offline' && errorMessage[0].msg)? 
+                <Alert severity="error">{errorMessage[0].msg}</Alert>
+                : null
+            }
+
             <form className={classes.form} onSubmit={handleSubmit} noValidate>
                 <TextField
                     variant="outlined"
