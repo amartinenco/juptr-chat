@@ -29,6 +29,12 @@ export const connectWithWebSocket = () => {
   });
 }
 
+export const disconnectWebSocket = () => {
+  if (socket) {
+    socket.disconnect();
+  }
+}
+
 const registerNewUser = (socketId: string) => {
   let userCredentials : ILoggedIn | null | undefined = store.getState().user.user;
 
