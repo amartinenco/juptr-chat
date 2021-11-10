@@ -15,7 +15,6 @@ export const connectWithWebSocket = () => {
   });
   
   socket.on('connect', () => {
-    console.log('Connected');
     registerNewUser(socket.id)
   });
 

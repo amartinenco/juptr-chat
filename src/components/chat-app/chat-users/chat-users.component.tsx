@@ -13,10 +13,6 @@ import ILoggedIn from '../../../types/logged-in.interface';
 import ChatUserItem from './chat-user-item/chat-user-item.component';
 import chatUsersStyles from './chat-users.styles';
 
-// interface Props {
-//   user?: ILoggedIn | null | undefined;
-// }
-// const ChatUsers: React.FC<Props> = ({ user } : Props) => {
 const ChatUsers: React.FC = () => {
   const classes = chatUsersStyles();
   const user = useSelector((state: RootState) => state.user.user);
@@ -50,9 +46,18 @@ const ChatUsers: React.FC = () => {
       </Grid>
       <Divider />
       <List>
-        {filteredUsers.filter((activeUser) => activeUser !== user?.displayName).map((activeUser, index) => 
-        <ChatUserItem displayName={activeUser} key={index} />
-        )}
+        {
+          (activeUsers.length <= 1)?
+          <ListItem button key={'no_users'}>
+            <ListItemText>
+              No users online
+            </ListItemText> 
+          </ListItem>
+          :
+          filteredUsers.filter((activeUser) => activeUser !== user?.displayName).map((activeUser, index) => 
+            <ChatUserItem displayName={activeUser} key={index} />
+          )
+        }
       </List>
     </React.Fragment>
   );

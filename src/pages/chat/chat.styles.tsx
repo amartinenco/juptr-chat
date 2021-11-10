@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 const chatStyles = makeStyles((theme) => ({
   chatSection: {
     width: '100%',
-    height: '90vh'
+    height: '92vh'
   },
   borderRight: {
     borderRight: '1px solid #e0e0e0',
