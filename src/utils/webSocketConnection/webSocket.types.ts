@@ -6,3 +6,4 @@ export interface IBroadcastData {
   event: BROADCAST,
   payload: any
 }
+
