@@ -1,5 +1,6 @@
 import { ListItem, ListItemIcon, Avatar, ListItemText } from '@material-ui/core';
 import React from 'react';
+import { call } from '../../../../utils/webRTC/webRTC.service';
 // import { createConnection } from '../../../../utils/webRTC/webRTC.service';
 
 interface Props {
@@ -9,11 +10,11 @@ interface Props {
 
 const ChatUserItem: React.FC<Props> = ({ displayName, fullName } : Props) => {
 
-  // const callSomeone = (event: React.MouseEvent<HTMLElement>) => {
-  // if (displayName) {
-  //   createConnection(displayName);
-  // }
-  // };
+  const callSomeone = (event: React.MouseEvent<HTMLElement>) => {
+  if (displayName) {
+    call(displayName);
+  }
+  };
 
   return (
   <React.Fragment>
@@ -26,7 +27,7 @@ const ChatUserItem: React.FC<Props> = ({ displayName, fullName } : Props) => {
         :
         <ListItemText primary={ displayName }></ListItemText> 
       }
-      {/* <button onClick={callSomeone}>Call</button> */}
+      <button onClick={callSomeone}>Call</button>
     </ListItem>
   </React.Fragment>
   );

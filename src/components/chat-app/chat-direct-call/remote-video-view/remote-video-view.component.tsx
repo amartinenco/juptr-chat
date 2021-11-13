@@ -5,8 +5,8 @@ import remoteVideoViewStyles from './remote-video-view.styles';
 
 const RemoteVideoView: React.FC = () => {
   const classes = remoteVideoViewStyles();
-  // const remoteStream = useSelector((state: RootState) => state.call.localStream);
-  const remoteStream = null;
+  const remoteStream = useSelector((state: RootState) => state.call.remoteStream);
+  // const remoteStream = null;
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const RemoteVideoView: React.FC = () => {
 
   return (
     <div className={classes.remoteVideoContainer}>
-      <video className={classes.videoElement} ref={remoteVideoRef} autoPlay muted />
+      <video className={classes.videoElement} ref={remoteVideoRef} autoPlay />
     </div>
   );
 }

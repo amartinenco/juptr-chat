@@ -7,8 +7,7 @@ import RemoteVideoView from './remote-video-view/remote-video-view.component';
 
 const ChatDirectCall: React.FC = () => {
   const classes = chatDirectCallStyles();
-  // const remoteStream = useSelector((state: RootState) => state.call.localStream);
-  const remoteStream = null;
+  const remoteStream = useSelector((state: RootState) => state.call.remoteStream);
   
   return (
     <div className={classes.root}>

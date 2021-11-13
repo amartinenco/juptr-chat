@@ -8,16 +8,12 @@ export interface IWebRTCOffer {
 export interface IWebRTCIceCandidate {
   name: string,
   target: string,
-  candidate: RTCIceCandidate | null
+  type: string;
+  candidate: RTCIceCandidateInit
 }
 
-
-// export interface IWebRTCOffer {
-//   displayName: string,
-//   offer: RTCSessionDescriptionInit
-// }
-
-// export interface IWebRTCAnswer {
-//   displayName: string,
-//   answer: RTCSessionDescriptionInit
-// }
+export interface IWebRTCAnswer {
+  name: string,
+  target: string,
+  answer: RTCSessionDescriptionInit
+}

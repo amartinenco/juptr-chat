@@ -6,7 +6,8 @@ interface ICallAction {
 }
 
 export const callInitialState : CallState = {
-  localStream: null
+  localStream: null,
+	remoteStream: null
 }
 
 const CallReducer = (state: CallState = callInitialState, action: ICallAction) : CallState => {
@@ -16,6 +17,11 @@ const CallReducer = (state: CallState = callInitialState, action: ICallAction) :
 				...state,
         localStream: action.payload
 			};
+		case CallActionTypes.SET_REMOTE_STREAM:
+			return {
+				...state,
+				remoteStream: action.payload
+			};	
 		default:
 			return state;
 	}

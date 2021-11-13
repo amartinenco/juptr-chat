@@ -1,11 +1,13 @@
-import { setLocalStream } from '../../redux/call/call.actions';
+import { setLocalStream, setRemoteStream } from '../../redux/call/call.actions';
 import store from '../../redux/store';
-import { sendICECandidates, sendWebRTCOffer } from '../webSocketConnection/webSocketConnection.service';
+import { sendICECandidates, sendWebRTCAnswer, sendWebRTCOffer } from '../webSocketConnection/webSocketConnection.service';
+import { IWebRTCAnswer, IWebRTCIceCandidate, IWebRTCOffer } from './webRTC.types';
 
 /* References: 
   https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling
   https://docs.microsoft.com/en-us/previous-versions/mt806219(v=vs.85)
   https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/createOffer
+  https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/addIceCandidate
 */
 
 const configuration = {
@@ -33,13 +35,14 @@ const constraints = {
   audio: true
 }
 
-let peerConnection : RTCPeerConnection;
+let callerConnection : RTCPeerConnection;
+let receiverConnection : RTCPeerConnection;
 
 export const setUpLocalStream = () => {
   navigator.mediaDevices.getUserMedia(constraints).then(stream => {
     store.dispatch(setLocalStream(stream));
   }).catch(error => {
-    console.error('Local stream failed');
+    console.error('Local stream failed', error);
   });
 }
 
@@ -60,17 +63,32 @@ export const call = (callTo: string) => {
   }
 }
 
+const invite = () => {
+  callerConnection = new RTCPeerConnection(configuration);
+  const localStream = store.getState().call.localStream;
+
+  if (localStream) {
+    for (const track of localStream.getTracks()) {
+      callerConnection.addTrack(track, localStream);
+    }
+  }
+  callerConnection.ontrack = ({ streams: [stream] }) => {
+    store.dispatch(setRemoteStream(stream));
+  } 
+}
+
 const handleNegotiationNeededEvent = (callFrom: string, callTo: string) => {
-  peerConnection.onnegotiationneeded = () => {
-    peerConnection.createOffer().then(function(offer) {
-      return peerConnection.setLocalDescription(offer);
+
+  callerConnection.onnegotiationneeded = () => {
+    callerConnection.createOffer().then(function(offer) {
+      return callerConnection.setLocalDescription(offer);
     }).then(() => {
-      if (peerConnection.localDescription) {
+      if (callerConnection.localDescription) {
         sendWebRTCOffer({
           name: callFrom,
           target: callTo,
           type: "video-offer",
-          sdp: peerConnection.localDescription
+          sdp: callerConnection.localDescription
         });
       }
     }).catch((error) => {
@@ -78,24 +96,14 @@ const handleNegotiationNeededEvent = (callFrom: string, callTo: string) => {
     });
   }
 
-  peerConnection.onicecandidate = (event: RTCPeerConnectionIceEvent) => {
+  callerConnection.onicecandidate = (event: RTCPeerConnectionIceEvent) => {
     if (event.candidate) {
       sendICECandidates({
         name: callFrom,
         target: callTo,
+        type: 'to_receiver',
         candidate: event.candidate
       });
-    }
-  }
-}
-
-const invite = () => {
-  peerConnection = new RTCPeerConnection(configuration);
-  const localStream = store.getState().call.localStream;
-
-  if (localStream) {
-    for (const track of localStream.getTracks()) {
-      peerConnection.addTrack(track, localStream);
     }
   }
 }
@@ -106,136 +114,66 @@ const invite = () => {
 // 2. Create an RTCSessionDescription using the received SDP offer
 // 3. Call RTCPeerConnection.setRemoteDescription() to tell webRTC about caller's configuraiton
 // 4. Call getUserMedia() to access the webcam and microphone
-// 5. Promise fulfileld: att the local stream's tracks by calling RTCPeerConnection.addTrack()
-// 
-const handleReceivedWebRTCOffer = () => {
-  peerConnection = new RTCPeerConnection(configuration);
-}
+// 5. Promise fulfileld: add the local stream's tracks by calling RTCPeerConnection.addTrack()
+// 6. RTCPeerConnection.createAnswer() to create an SDP answer to send to caller
 
+export const handleReceivedWebRTCOffer = async (data : IWebRTCOffer) => {
+  const answerFrom = store.getState().user.user?.displayName;
+  if (data && data.sdp && answerFrom) {
+    receiverConnection = new RTCPeerConnection(configuration);
 
+    const localStream = store.getState().call.localStream;
+    if (localStream) {
+      for (const track of localStream.getTracks()) {
+        receiverConnection.addTrack(track, localStream);
+      }
+    }
 
-// export const createConnection = () => {
-//   peerConnection = new RTCPeerConnection(configuration);
-//   if (peerConnection) {
-//     getLocalStream();
-//   }
-//   const localStream = store.getState().call.localStream;
-//   console.log(localStream);
+    receiverConnection.ontrack = ({ streams: [stream] }) => {
+      store.dispatch(setRemoteStream(stream));
+    } 
 
-// }
+    await receiverConnection.setRemoteDescription(data.sdp);
 
-// export const getLocalStream = () => {
-//   navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-//     store.dispatch(setLocalStream(stream));
-//   }).catch(error => {
-//     console.error('Local stream failed');
-//   });
-
-
-// }
-
-// export const createConnection = (callTo: string) => {
-//   calleeUserId = callTo;
-
-//   console.log('Calling to', calleeUserId);
-//   peerConnection = new RTCPeerConnection(configuration);
+    const answer = await receiverConnection.createAnswer();
+    await receiverConnection.setLocalDescription(answer);
+    sendWebRTCAnswer({
+      name: answerFrom,
+      target: data.target,
+      answer: answer
+    });
   
-//   peerConnection.onnegotiationneeded = () => {
-//     console.log('-------------------');
-//   }
-  
-  // getUserMedia();
-  /*
-    RTCPeerConnection.setLocalDescription() and other methods which take SDP as input 
-    now directly accept an object conforming to the RTCSessionDescriptionInit dictionary, 
-    so you don't have to instantiate an RTCSessionDescription yourself.
-  */
-  // peerConnection.onnegotiationneeded = () => {
-  //   peerConnection.createOffer().then((offer) : Promise<RTCSessionDescriptionInit | void> => {
-  //     console.log('Offer:', offer);
-  //     return peerConnection.setLocalDescription(offer);
-  //   }).then((offer) => {
-  //     // Send the offer to the remote peer through the signaling server
-  //     console.log('Sending offer');
-  //     // if ((offer as RTCSessionDescriptionInit).type) {
-  //     //   sendWebRTCOffer({
-  //     //     displayName: calleeUserId,
-  //     //     offer: offer as RTCSessionDescriptionInit
-  //     //   });
-  //     // } 
-  //   }).catch(() => {
-  //     console.error('Failed to send offer to the remote peer through signaling server');
-  //   });
-  // }
-// }
-
-
-// const getUserMedia = () => {
-//   navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-//     store.dispatch(setLocalStream(stream));
-//   }).catch(error => {
-//     console.error('Local stream failed');
-//   });
-// }
-
-// export const handleOffer = async (data : IWebRTCOffer) => {
-//   await peerConnection.setRemoteDescription(data.offer);
-//   const answer = await peerConnection.createAnswer();
-//   await peerConnection.setLocalDescription(answer);
-//   sendWebRTCAnswer({
-//     displayName: data.displayName,
-//     answer: answer
-//   });
-// }
-
-// export const handleAnswer = async (data: IWebRTCAnswer) => {
-//   await peerConnection.setRemoteDescription(data.answer);
-// }
-
-
-// const setConnection = () => {
-//   peerConnection = new RTCPeerConnection(configuration);
-// }
-
-
-
-// export const getLocalStream = () => {
-//   navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-//     store.dispatch(setLocalStream(stream));
-//     createPeerConnection();
-//   }).catch(error => {
-//     console.error('Local stream failed');
-//   });
-// }
-
-// const createPeerConnection = () => {
-//   peerConnection = new RTCPeerConnection(configuration);
-//   const localStream = store.getState().call.localStream;
-
-//   if (localStream) {
-//     for (const track of localStream?.getTracks()) {
-//       peerConnection.addTrack(track, localStream);
-//     }
-//   }
-// }
-
-
-/*
-
-  myPeerConnection.onicecandidate = handleICECandidateEvent;
-  myPeerConnection.ontrack = handleTrackEvent;
-  myPeerConnection.onnegotiationneeded = handleNegotiationNeededEvent;
-
-  // peerConnection.ontrack = (event : RTCTrackEvent) => {
-  //   console.log(event.streams);
-  // }
-
-let obj = { 
-	myArr: [10, 20, 30, 40, 50]
+    receiverConnection.onicecandidate = (event: RTCPeerConnectionIceEvent) => {
+      if (event.candidate) {
+        sendICECandidates({
+          name: answerFrom,
+          target: data.target,
+          type: 'to_caller',
+          candidate: event.candidate
+        });
+      }
+    }
+  }
 }
-const myFunc = ({ myArr : [something, something2] }) => {
-	console.log(something, something2); 
+
+export const handleReceivedAnswer = async (data: IWebRTCAnswer) => {
+  try {
+    await callerConnection.setRemoteDescription(data.answer);
+  } catch (error) {
+    console.error('Failed to set remote description', error);
+  }
 }
-myFunc(obj);
-// 10, 20
-*/
+
+export const handleReceivedICECandidate = async (data: IWebRTCIceCandidate) => {
+  try {
+    if (data.type) {
+      if (data.type === 'to_receiver') {
+        await receiverConnection.addIceCandidate(data.candidate);
+      } else if (data.type === 'to_caller'){
+        await callerConnection.addIceCandidate(data.candidate);
+      }
+    }
+  } catch (error) {
+    console.error('Failed to add ICE candidate', error);
+  }
+}

@@ -3,8 +3,8 @@ import { signOutStart } from '../../redux/auth/auth.actions';
 import { setActiveUsers } from '../../redux/chat/chat.actions';
 import store from '../../redux/store';
 import ILoggedIn from '../../types/logged-in.interface';
-import { IWebRTCIceCandidate, IWebRTCOffer } from '../webRTC/webRTC.types';
-// import { handleAnswer, handleOffer } from '../webRTC/webRTC.service';
+import { handleReceivedAnswer, handleReceivedICECandidate, handleReceivedWebRTCOffer } from '../webRTC/webRTC.service';
+import { IWebRTCAnswer, IWebRTCIceCandidate, IWebRTCOffer } from '../webRTC/webRTC.types';
 import { BROADCAST, IBroadcastData } from './webSocket.types';
 
 const SERVER = 'http://localhost:5000';
@@ -29,15 +29,19 @@ export const connectWithWebSocket = () => {
     // store.dispatch(signOutStart());
   });
 
-  // WebSocket listening
-
-  socket.on('webRTC-offer', (data) => {
-    // handleOffer(data);
+  
+  // WebRTC event listeners 
+  socket.on('webRTC-offer', (data : IWebRTCOffer) => {
+    handleReceivedWebRTCOffer(data);
   });
 
-  // socket.on('webRTC-answer', (data) => {
-  //   handleAnswer(data);
-  // });
+  socket.on('webRTC-answer', (data: IWebRTCAnswer) => {
+    handleReceivedAnswer(data);
+  });
+
+  socket.on('webRTC-candidate', (data: IWebRTCIceCandidate) => {
+    handleReceivedICECandidate(data);
+  });
 }
 
 export const disconnectWebSocket = () => {
@@ -77,6 +81,6 @@ export const sendICECandidates = (data: IWebRTCIceCandidate) => {
   socket.emit('webRTC-candidate', data);
 }
 
-// export const sendWebRTCAnswer = (data: IWebRTCAnswer) => {
-//   socket.emit('webRTC-answer', data);
-// }
+export const sendWebRTCAnswer = (data: IWebRTCAnswer) => {
+  socket.emit('webRTC-answer', data);
+}
