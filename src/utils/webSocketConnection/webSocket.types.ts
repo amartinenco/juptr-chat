@@ -7,3 +7,20 @@ export interface IBroadcastData {
   payload: any
 }
 
+export interface ICallAttempt {
+  name: string,
+  target: string,
+  type: string,
+}
+
+export interface ICallAttemptResponse {
+  name: string,
+  target: string,
+  response: CallAttemptResponse
+}
+
+export enum CallAttemptResponse {
+  CALL_ACCEPTED = 'CALL_ACCEPTED',
+  CALL_REJECTED = 'CALL_REJECTED',
+  CALL_UNAVAILABLE = 'CALL_UNAVAILABLE',
+}

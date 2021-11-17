@@ -3,6 +3,7 @@ import { ICredentials } from "../../types/credentials.interface";
 import IResponseError from "../../types/error.interface";
 import ILoggedIn from "../../types/logged-in.interface";
 import IRegisterCredentials from "../../types/sign-up.interface";
+import { resetCallState } from "../call/call.actions";
 import { checkUserSessionFailure, checkUserSessionSuccess, registrationFailure, registrationSuccess, signInFailure, signInSuccess, signOutFailure, signOutSuccess } from "./auth.actions";
 import { AuthActionTypes } from "./auth.types";
 import { checkCurrentUserSession, loginUser, logoutUser, registerUser } from "./auth.utils";
@@ -65,6 +66,7 @@ export function* signOut() {
   try {
     yield call(logoutUser);
     yield put(signOutSuccess());
+    yield put(resetCallState());
   } catch (error) {
     yield put(signOutFailure([{
       msg: 'Failed to signout.'

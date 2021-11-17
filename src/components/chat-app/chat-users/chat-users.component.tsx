@@ -55,7 +55,7 @@ const ChatUsers: React.FC = () => {
           </ListItem>
           :
           filteredUsers.filter((activeUser) => activeUser !== user?.displayName).map((activeUser, index) => 
-            <ChatUserItem displayName={activeUser} key={index} />
+            <ChatUserItem displayName={activeUser} key={index} from={user?.displayName}/>
           )
         }
       </List>

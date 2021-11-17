@@ -1,11 +1,13 @@
 import socketClient, { Socket } from 'socket.io-client';
 import { signOutStart } from '../../redux/auth/auth.actions';
+import { setCallerName, setCallState, showCallDialog } from '../../redux/call/call.actions';
+import { CallStates } from '../../redux/call/call.types';
 import { setActiveUsers } from '../../redux/chat/chat.actions';
 import store from '../../redux/store';
 import ILoggedIn from '../../types/logged-in.interface';
 import { handleReceivedAnswer, handleReceivedICECandidate, handleReceivedWebRTCOffer } from '../webRTC/webRTC.service';
 import { IWebRTCAnswer, IWebRTCIceCandidate, IWebRTCOffer } from '../webRTC/webRTC.types';
-import { BROADCAST, IBroadcastData } from './webSocket.types';
+import { BROADCAST, CallAttemptResponse, IBroadcastData, ICallAttempt, ICallAttemptResponse} from './webSocket.types';
 
 const SERVER = 'http://localhost:5000';
 
@@ -42,6 +44,22 @@ export const connectWithWebSocket = () => {
   socket.on('webRTC-candidate', (data: IWebRTCIceCandidate) => {
     handleReceivedICECandidate(data);
   });
+
+  // Call Attempt listeners
+  socket.on('callAttempt', (data: ICallAttempt) => {
+    store.dispatch(setCallState(CallStates.CALL_REQUESTED));
+    store.dispatch(showCallDialog({
+      type: data.type,
+      show: true
+    }));
+    store.dispatch(setCallerName(data.target));
+  });
+
+  socket.on('callAttemptResponse', (data: ICallAttemptResponse) => {
+    if (data) {
+      callAttemptHandler(data);
+    }
+  });
 }
 
 export const disconnectWebSocket = () => {
@@ -71,6 +89,35 @@ const broadcastHandler = (data: IBroadcastData) => {
     default:
       break;
   }
+}
+
+// accept/decline logic
+const callAttemptHandler = (data: ICallAttemptResponse) => {
+  switch (data.response) {
+    case CallAttemptResponse.CALL_ACCEPTED:
+      store.dispatch(showCallDialog({
+        type: '',
+        show: false
+      }));
+      store.dispatch(setCallState(CallStates.CALL_IN_PROGRESS));
+      break;
+    case CallAttemptResponse.CALL_REJECTED:
+      store.dispatch(showCallDialog({
+        type: '',
+        show: false
+      }));
+      store.dispatch(setCallState(CallStates.CALL_AVAILABLE));
+      break;
+    case CallAttemptResponse.CALL_UNAVAILABLE:
+      store.dispatch(showCallDialog({
+        type: '',
+        show: false
+      }));
+      store.dispatch(setCallState(CallStates.CALL_AVAILABLE));
+      break;
+    default:
+      break;
+  }
 } 
 
 export const sendWebRTCOffer = (data: IWebRTCOffer) => {
@@ -83,4 +130,18 @@ export const sendICECandidates = (data: IWebRTCIceCandidate) => {
 
 export const sendWebRTCAnswer = (data: IWebRTCAnswer) => {
   socket.emit('webRTC-answer', data);
+}
+
+export const callAttempt = (data: ICallAttempt) => {
+  store.dispatch(setCallerName(data.target));
+  store.dispatch(setCallState(CallStates.CALL_REQUESTED));
+  store.dispatch(showCallDialog({
+    type: data.type,
+    show: true
+  }));
+  socket.emit('callAttempt', data);
+}
+
+export const callAttemptResponse = (data: ICallAttemptResponse) => {
+  socket.emit('callAttemptResponse', data);
 }
