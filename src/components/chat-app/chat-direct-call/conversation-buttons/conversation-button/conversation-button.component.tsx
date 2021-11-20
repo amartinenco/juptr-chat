@@ -10,9 +10,9 @@ const ConversationButton: React.FC<Props> = (props) => {
   const classes = conversationButtonStyles();
 
   return (
-  <button className={classes.button} onClick={onClickHandler}>
-    {props.children}
-  </button>
+    <button className={classes.button} onClick={onClickHandler}>
+      {props.children}
+    </button>
   );
 }
 

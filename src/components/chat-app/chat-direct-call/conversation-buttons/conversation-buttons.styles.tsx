@@ -5,8 +5,11 @@ createStyles({
   buttonContainer: {
     display: 'flex',
     position: 'absolute',
-    bottom: '22%',
-    left: '35%'
+    bottom: '5%',
+    // left: '10%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    zIndex: 100
   },
 }),
 );

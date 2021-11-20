@@ -9,7 +9,9 @@ createStyles({
     borderRadius: '5px',
     position: 'absolute',
     top: '10%',
-    right: '35%'
+    right: '10%',
+    // right: '35%',
+    // transform: 'translateX(10%)',
   },
   videoElement: {
     width: '100%',

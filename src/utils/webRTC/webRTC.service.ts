@@ -1,4 +1,4 @@
-import { setLocalStream, setRemoteStream } from '../../redux/call/call.actions';
+import { resetCallState, setLocalStream, setRemoteStream } from '../../redux/call/call.actions';
 import store from '../../redux/store';
 import { sendICECandidates, sendWebRTCAnswer, sendWebRTCOffer } from '../webSocketConnection/webSocketConnection.service';
 import { IWebRTCAnswer, IWebRTCIceCandidate, IWebRTCOffer } from './webRTC.types';
@@ -175,5 +175,16 @@ export const handleReceivedICECandidate = async (data: IWebRTCIceCandidate) => {
     }
   } catch (error) {
     console.error('Failed to add ICE candidate', error);
+  }
+}
+
+export const connectionTeardown = () => {
+  store.dispatch(resetCallState());
+  
+  if (callerConnection) {
+    callerConnection.close();
+  } 
+  if (receiverConnection) {
+    receiverConnection.close();
   }
 }

@@ -5,6 +5,7 @@ const chatDirectCallStyles = makeStyles((theme: Theme) =>
 createStyles({
   root: {
     height: '100%',
+    position: 'relative'
   },
   talking: {
     // display: "flex",

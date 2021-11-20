@@ -5,9 +5,9 @@ import { CallStates } from '../../redux/call/call.types';
 import { setActiveUsers } from '../../redux/chat/chat.actions';
 import store from '../../redux/store';
 import ILoggedIn from '../../types/logged-in.interface';
-import { handleReceivedAnswer, handleReceivedICECandidate, handleReceivedWebRTCOffer } from '../webRTC/webRTC.service';
+import { call, connectionTeardown, handleReceivedAnswer, handleReceivedICECandidate, handleReceivedWebRTCOffer } from '../webRTC/webRTC.service';
 import { IWebRTCAnswer, IWebRTCIceCandidate, IWebRTCOffer } from '../webRTC/webRTC.types';
-import { BROADCAST, CallAttemptResponse, IBroadcastData, ICallAttempt, ICallAttemptResponse} from './webSocket.types';
+import { BROADCAST, CallAttemptResponse, CallConnectionStatus, IBroadcastData, ICallAttempt, ICallAttemptResponse, ICallStatusChange} from './webSocket.types';
 
 const SERVER = 'http://localhost:5000';
 
@@ -60,6 +60,12 @@ export const connectWithWebSocket = () => {
       callAttemptHandler(data);
     }
   });
+
+  socket.on('callStatusChange', (data: ICallStatusChange) => {
+    if (data) {
+      callStatusHandler(data);
+    }
+  });
 }
 
 export const disconnectWebSocket = () => {
@@ -95,11 +101,15 @@ const broadcastHandler = (data: IBroadcastData) => {
 const callAttemptHandler = (data: ICallAttemptResponse) => {
   switch (data.response) {
     case CallAttemptResponse.CALL_ACCEPTED:
-      store.dispatch(showCallDialog({
-        type: '',
-        show: false
-      }));
+      if (data && data.target) {
       store.dispatch(setCallState(CallStates.CALL_IN_PROGRESS));
+        store.dispatch(showCallDialog({
+          show: false
+        }));
+        // console.log('------------------------------');
+        // console.log(data.target);
+        call(data.target)
+      }
       break;
     case CallAttemptResponse.CALL_REJECTED:
       store.dispatch(showCallDialog({
@@ -118,7 +128,20 @@ const callAttemptHandler = (data: ICallAttemptResponse) => {
     default:
       break;
   }
+}
+
+const callStatusHandler = (data: ICallStatusChange) => {
+  switch (data.status) {
+    case CallConnectionStatus.CALL_CONNECTION_TERMINATED:
+      if (data && data.target) {
+        connectionTeardown();
+      }
+      break;
+    default:
+      break;
+  }
 } 
+
 
 export const sendWebRTCOffer = (data: IWebRTCOffer) => {
   socket.emit('webRTC-offer', data);
@@ -144,4 +167,44 @@ export const callAttempt = (data: ICallAttempt) => {
 
 export const callAttemptResponse = (data: ICallAttemptResponse) => {
   socket.emit('callAttemptResponse', data);
+}
+
+export const callTermination = (data: ICallStatusChange) => {
+  socket.emit('callStatusChange', data);
+}
+
+export const pickUpTheCall = (user: ILoggedIn, callFrom: string) => {
+  if (user && user.displayName && callFrom) {
+    store.dispatch(showCallDialog({
+      show: false
+    }));
+    callAttemptResponse({
+      name: user.displayName,
+      target: callFrom,
+      response: CallAttemptResponse.CALL_ACCEPTED
+    });
+    store.dispatch(setCallState(CallStates.CALL_IN_PROGRESS));
+  }
+}
+
+export const hangUpTheCall = (user: ILoggedIn, otherParty: string) => {
+  if (user && user.displayName && otherParty) {
+    callAttemptResponse({  
+      name: user.displayName,
+      target: otherParty,
+      response: CallAttemptResponse.CALL_REJECTED
+    });
+    store.dispatch(setCallState(CallStates.CALL_AVAILABLE));
+  }
+}
+
+export const terminateConversation = (user: ILoggedIn, otherParty: string) => {
+  if (user && user.displayName && otherParty) {
+    callTermination({  
+      name: user.displayName,
+      target: otherParty,
+      status: CallConnectionStatus.CALL_CONNECTION_TERMINATED
+    });
+  }
+  connectionTeardown();
 }

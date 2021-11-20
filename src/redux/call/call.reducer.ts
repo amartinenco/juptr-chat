@@ -62,7 +62,7 @@ const CallReducer = (state: CallState = callInitialState, action: ICallAction) :
 			return {
 				...state,
 				callState: CallStates.CALL_AVAILABLE,
-				localStream: null,
+				// localStream: null,
 				remoteStream: null,
 				isScreenSharing: false,
 				isCameraEnabled: true,

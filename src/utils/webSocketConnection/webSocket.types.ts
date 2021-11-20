@@ -24,3 +24,13 @@ export enum CallAttemptResponse {
   CALL_REJECTED = 'CALL_REJECTED',
   CALL_UNAVAILABLE = 'CALL_UNAVAILABLE',
 }
+
+export enum CallConnectionStatus {
+  CALL_CONNECTION_TERMINATED= 'CALL_CONNECTION_TERMINATED',
+}
+
+export interface ICallStatusChange {
+  name: string,
+  target: string,
+  status: CallConnectionStatus
+}

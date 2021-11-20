@@ -1,5 +1,6 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { resetCallState } from '../../../redux/call/call.actions';
 import { CallStates } from '../../../redux/call/call.types';
 import { RootState } from '../../../redux/store';
 import CallDialog from './call-dialog/call-dialog.component';
@@ -15,6 +16,15 @@ const ChatDirectCall: React.FC = () => {
   const name = useSelector((state: RootState) => state.call.name);
   // const callDialog = useSelector((state: RootState) => state.call.showCallDialog);
 
+  // const dispatch = useDispatch();
+
+  // useEffect(() => {
+  //   if (!remoteStream && callState === CallStates.CALL_IN_PROGRESS) {
+  //     //RESET_CALL_STATE
+  //     dispatch(resetCallState());
+  //   }
+  // }, [remoteStream, callState]); 
+
   return (
     <div className={classes.root}>
       <LocalVideoView />
@@ -23,10 +33,11 @@ const ChatDirectCall: React.FC = () => {
       }
 
       {/* <CallDialog name={'asdasdasdasdaasdasdasdasdasdasdasdasdasd'} isCalling={true}/> */}
-      <div className={remoteStream ? classes.talking : classes.pending} >
+      <div className={remoteStream && callState === CallStates.CALL_IN_PROGRESS ? classes.talking : classes.pending} >
       {/* <RemoteVideoView /> */}
-        {/* {remoteStream && callState === CallStates.CALL_IN_PROGRESS ? <RemoteVideoView /> : null }
-        {remoteStream && callState === CallStates.CALL_IN_PROGRESS ? <ConversationButtons /> : null } */}
+        {/* {remoteStream && callState === CallStates.CALL_IN_PROGRESS ? <RemoteVideoView /> : null } */}
+        {remoteStream && callState === CallStates.CALL_IN_PROGRESS ? <ConversationButtons /> : null }
+        {remoteStream && callState === CallStates.CALL_IN_PROGRESS ? <RemoteVideoView /> : null}
       </div>
     </div>
   );
