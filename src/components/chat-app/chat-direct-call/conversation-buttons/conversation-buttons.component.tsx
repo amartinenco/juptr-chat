@@ -15,66 +15,101 @@ import MicOffIcon from '@material-ui/icons/MicOff';
 import MicIcon from '@material-ui/icons/Mic';
 import { terminateConversation } from '../../../../utils/webSocketConnection/webSocketConnection.service';
 import { RootState } from '../../../../redux/store';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import ILoggedIn from '../../../../types/logged-in.interface';
+import { CallActionTypes } from '../../../../redux/call/call.types';
+import { setCameraEnabled, setMicrophoneEnabled } from '../../../../redux/call/call.actions';
+import { switchToScreenSharing } from '../../../../utils/webRTC/webRTC.service';
 
-const ConversationButtons = () => {
+interface Props {
+  currentUser: ILoggedIn
+  targetUserId: string
+  localStream : MediaStream | null
+  // remoteStream : MediaStream
+  isScreenSharing : boolean
+  isCameraEnabled : boolean
+  isMicrophoneEnabled : boolean
+  // cameraAction : {
+  //   type: CallActionTypes.SET_CAMERA_ENABLED
+  //   payload: MediaStream
+  // }
+  // microphoneAction: {
+  //   type: CallActionTypes.SET_MICROPHONE_ENABLED
+  //   payload: MediaStream
+  // }
+  // screenSharingAction: {
+  //   type: CallActionTypes.SET_SCREENSHARING_ENABLED
+  //   payload: MediaStream
+  // }
+}
+
+const ConversationButtons: React.FC<Props> = (props) => {
+  const dispatch = useDispatch();
   const classes = conversationButtonsStyles();
-  const user = useSelector((state: RootState) => state.user.user);
-  const target = useSelector((state: RootState) => state.call.name);
+  const currentUser = props.currentUser;
+  const targetUserId = props.targetUserId;
+  const localStream = props.localStream;
+  // const remoteStream = props.remoteStream;
+  const isScreenSharing = props.isScreenSharing;
+  const isCameraEnabled = props.isCameraEnabled;
+  const isMicrophoneEnabled = props.isMicrophoneEnabled;
+  // const setCameraEnabled = props.cameraAction;
+  // const setMicrophoneEnabled = props.microphoneAction;
+  // const setScreenSharingEnabled = props.screenSharingAction;
+  // const user = useSelector((state: RootState) => state.user.user);
+  // const target = useSelector((state: RootState) => state.call.name);
+  // const localStream = useSelector((state: RootState) => state.call.localStream);
 
   const hangUpHandler = () => {
-    if (user && target) {
-      terminateConversation(user, target);
+    if (currentUser && targetUserId) {
+      terminateConversation(currentUser, targetUserId);
     }
   };
+
+  const cameraToggleHandler = () => {
+    const cameraEnabled = isCameraEnabled;
+    if (localStream && localStream.getVideoTracks().length > 0) {
+      localStream.getVideoTracks()[0].enabled = !cameraEnabled;
+      dispatch(setCameraEnabled(!cameraEnabled));
+    }
+  }
+
+  const microphoneToggleHandler = () => {
+    const microphoneEnabled = isMicrophoneEnabled;
+    if (localStream) {
+      localStream.getAudioTracks()[0].enabled = !microphoneEnabled;
+      dispatch(setMicrophoneEnabled(!microphoneEnabled));
+    }
+  }
+
+  const screenSharingToggleHandler = () => {
+    const screenSharingEnabled = isScreenSharing;
+    switchToScreenSharing(!screenSharingEnabled);
+  }
 
   return (
     <div className={classes.buttonContainer}> 
       <ConversationButton onClickHandler={hangUpHandler}>
         <CallEndIcon color="secondary" style={{ fontSize: 35 }} />
       </ConversationButton>
-      <ConversationButton onClickHandler={hangUpHandler}>
-        <ScreenShareIcon color="primary" style={{ fontSize: 35 }} />
+      <ConversationButton onClickHandler={screenSharingToggleHandler}>
+        { isScreenSharing ? 
+          <StopScreenShareIcon color="secondary" style={{ fontSize: 35 }} /> :
+          <ScreenShareIcon color="primary" style={{ fontSize: 35 }} />
+        }
       </ConversationButton>
-      <ConversationButton onClickHandler={hangUpHandler}>
-        <MicOffIcon color="secondary" style={{ fontSize: 35 }} />
+      <ConversationButton onClickHandler={microphoneToggleHandler}>
+        { isMicrophoneEnabled ? 
+          <MicOffIcon color="secondary" style={{ fontSize: 35 }} /> :
+          <MicIcon color="primary" style={{ fontSize: 35 }} />
+        }
       </ConversationButton>
-      <ConversationButton onClickHandler={hangUpHandler}>
-        <VideocamOffIcon color="secondary" style={{ fontSize: 35 }} />
+      <ConversationButton onClickHandler={cameraToggleHandler}>
+        { isCameraEnabled ?
+        <VideocamOffIcon color="secondary" style={{ fontSize: 35 }} /> :
+        <VideocamIcon color="primary" style={{ fontSize: 35 }} />
+        }
       </ConversationButton>
-    {/* <button type="button" onClick={() => {
-      console.log('hi')
-    }}> Test </button> */}
-      {/* <ConversationButton > */}
-        {/* <CallEndIcon color="secondary" style={{  }} /> */}
-      {/* </ConversationButton> */}
-      {/* <ConversationButton onClickHandler={hangUpHandler}>
-        <CallEndIcon color="secondary" style={{  }} />
-      </ConversationButton>
-      <ConversationButton onClickHandler={hangUpHandler}>
-        <CallEndIcon color="secondary" style={{  }} />
-      </ConversationButton> */}
-      {/* <ConversationButton onClickHandler={hangUpHandler}> */}
-        {/* <Button 
-          variant="contained" 
-          startIcon={<CallEndIcon color="secondary" style={{ fontSize: 50 }} />}
-          onClick={hangUpHandler}
-        >
-        </Button> */}
-      {/* </ConversationButton> */}
-      
-      {/* <ConversationButton onClickHandler={handleHangUpButtonPressed}>
-        <MdCallEnd style={styles.icon} />
-      </ConversationButton> */}
-
-    {/* <Button 
-      variant="contained" 
-      startIcon={<CallEndIcon color="secondary" 
-      style={{ fontSize: 50 }}/>}
-      onClick={handleHangup}
-      >
-      Hang Up
-    </Button> */}
     </div>
   )
 }

@@ -1,6 +1,6 @@
-import { resetCallState, setLocalStream, setRemoteStream } from '../../redux/call/call.actions';
+import { resetCallState, setLocalStream, setRemoteStream, setScreenSharingEnabled, setScreenSharingStream } from '../../redux/call/call.actions';
 import store from '../../redux/store';
-import { sendICECandidates, sendWebRTCAnswer, sendWebRTCOffer } from '../webSocketConnection/webSocketConnection.service';
+import { sendICECandidates, sendWebRTCAnswer, sendWebRTCOffer, terminateConversation } from '../webSocketConnection/webSocketConnection.service';
 import { IWebRTCAnswer, IWebRTCIceCandidate, IWebRTCOffer } from './webRTC.types';
 
 /* References: 
@@ -15,18 +15,19 @@ const configuration = {
     {
       urls:"stun:stun.l.google.com:19302"
     },
-    {
-      urls:"stun:stun1.l.google.com:19302"
-    },
-    {
-      urls:"stun:stun2.l.google.com:19302"
-    },
-    {
-      urls:"stun:stun3.l.google.com:19302"
-    },
-    {
-      urls:"stun:stun4.l.google.com:19302"
-    }
+    // Using more than 2 stun servers slows down discovery
+    // {
+    //   urls:"stun:stun1.l.google.com:19302"
+    // },
+    // {
+    //   urls:"stun:stun2.l.google.com:19302"
+    // },
+    // {
+    //   urls:"stun:stun3.l.google.com:19302"
+    // },
+    // {
+    //   urls:"stun:stun4.l.google.com:19302"
+    // }
   ]
 }
 
@@ -38,11 +39,20 @@ const constraints = {
 let callerConnection : RTCPeerConnection;
 let receiverConnection : RTCPeerConnection;
 
+// const retryButWithAudioOnly = () => {
+//   navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+//     store.dispatch(setLocalStream(stream));
+//   }).catch(error => {
+//     console.error('Local stream audio failed', error);
+//   });
+// }
+
 export const setUpLocalStream = () => {
   navigator.mediaDevices.getUserMedia(constraints).then(stream => {
     store.dispatch(setLocalStream(stream));
   }).catch(error => {
-    console.error('Local stream failed', error);
+    console.error('Local stream with video/audio failed', error);
+    // retryButWithAudioOnly();
   });
 }
 
@@ -80,6 +90,7 @@ const invite = () => {
 const handleNegotiationNeededEvent = (callFrom: string, callTo: string) => {
 
   callerConnection.onnegotiationneeded = () => {
+    console.log('onnegotiationneeded');
     callerConnection.createOffer().then(function(offer) {
       return callerConnection.setLocalDescription(offer);
     }).then(() => {
@@ -130,6 +141,7 @@ export const handleReceivedWebRTCOffer = async (data : IWebRTCOffer) => {
     }
 
     receiverConnection.ontrack = ({ streams: [stream] }) => {
+      console.log('Streams', stream.getTracks());
       store.dispatch(setRemoteStream(stream));
     } 
 
@@ -175,6 +187,101 @@ export const handleReceivedICECandidate = async (data: IWebRTCIceCandidate) => {
     }
   } catch (error) {
     console.error('Failed to add ICE candidate', error);
+  }
+}
+
+export const switchToScreenSharing = (enable: boolean) => {
+  const localStream = store.getState().call.localStream;
+
+  if (enable) {
+    let activeConnection = getActiveConnection();
+    if (activeConnection) {
+      console.log('ENABLE');
+      const mediaDevices = navigator.mediaDevices as any;
+      mediaDevices.getDisplayMedia({
+        video: true
+      }).then((stream : MediaStream) => {
+        if (activeConnection) {
+          // determine the video track sender
+          // if (localStream?.getVideoTracks().length === 0) {
+          //   for (const track of stream.getTracks()) {
+          //     activeConnection.addTrack(track, stream);
+          //   }
+          //   // for (const track of localStream.getTracks()) {
+          //   //   activeConnection.addTrack(track, stream);
+          //   // }
+          // }
+
+          const senders = activeConnection.getSenders();      
+          console.log('SENDERS', senders);
+          console.log('Video track', stream.getVideoTracks());
+
+          const sender = senders.find(sender => sender.track!.kind === stream.getVideoTracks()[0].kind);
+       
+          console.log('SENDER', sender);
+          if (sender) {
+            sender.replaceTrack(stream.getVideoTracks()[0]);
+          }
+      
+          store.dispatch(setScreenSharingEnabled(true));
+
+          stream.getVideoTracks()[0].onended = function () {
+            shareScreenTeardown(activeConnection);
+          };
+          store.dispatch(setScreenSharingStream(stream));
+        }
+      })
+      .catch((error: any) => {
+        console.error('Screen share failed', error);
+      });
+    }
+  } else {
+    let activeConnection = getActiveConnection();
+    if (activeConnection) {
+      shareScreenTeardown(activeConnection);
+      // setUpLocalStream();
+    }
+  }
+}
+
+const getActiveConnection = () => {
+  let activeConnection: RTCPeerConnection | undefined;
+
+  if (callerConnection) {
+    activeConnection = callerConnection;
+  } else if (receiverConnection) {
+    activeConnection = receiverConnection;
+  } else {
+    const user = store.getState().user.user;
+    const name = store.getState().call.name;
+    if (user && name) {
+      terminateConversation(user, name);
+    }
+  }
+
+  return activeConnection;
+}
+
+const shareScreenTeardown = (activeConnection: RTCPeerConnection | undefined) => {
+  let localStream = store.getState().call.localStream;
+  let screenSharingStream = store.getState().call.screenSharingStream;
+  if (activeConnection && localStream) {
+    const senders = activeConnection.getSenders();
+    // const sender = senders.find(sender => sender.track!.kind === localStream!.getVideoTracks()[0].kind);
+    const sender = senders.find(sender => {
+      if (sender.track) { return sender.track!.kind === "video"}
+    });
+    if (sender) {
+      sender.track?.stop();
+      if (localStream.getVideoTracks().length > 0) {
+        sender.replaceTrack(localStream.getVideoTracks()[0]);
+      }
+      
+    }
+    store.dispatch(setScreenSharingEnabled(false));
+  }
+  if (screenSharingStream) {
+    screenSharingStream.getTracks().forEach(track => track.stop());
   }
 }
 

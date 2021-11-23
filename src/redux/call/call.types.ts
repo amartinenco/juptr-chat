@@ -2,6 +2,7 @@ export type CallState = {
   callState: CallStates
   localStream: MediaStream | null,
   remoteStream: MediaStream | null,
+  screenSharingStream: MediaStream | null,
   isScreenSharing: boolean,
   isCameraEnabled: boolean,
   isMicrophoneEnabled: boolean,
@@ -24,6 +25,7 @@ export enum CallStates {
 export enum CallActionTypes {
   SET_LOCAL_STREAM = 'SET_LOCAL_STREAM',
   SET_REMOTE_STREAM = 'SET_REMOTE_STREAM',
+  SET_SCREENSHARING_STREAM = 'SET_SCREENSHARING_STREAM',
   SET_CALL_STATE = 'SET_CALL_STATE',
   SET_CAMERA_ENABLED = 'SET_CAMERA_ENABLED',
   SET_MICROPHONE_ENABLED = 'SET_MICROPHONE_ENABLED',

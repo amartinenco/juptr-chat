@@ -9,6 +9,7 @@ export const callInitialState : CallState = {
 	callState: CallStates.CALL_AVAILABLE,
   localStream: null,
   remoteStream: null,
+	screenSharingStream: null,
   isScreenSharing: false,
   isCameraEnabled: true,
   isMicrophoneEnabled: true,
@@ -27,6 +28,11 @@ const CallReducer = (state: CallState = callInitialState, action: ICallAction) :
 			return {
 				...state,
 				remoteStream: action.payload
+			};
+		case CallActionTypes.SET_SCREENSHARING_STREAM:
+			return {
+				...state,
+				screenSharingStream: action.payload
 			};
 		case CallActionTypes.SET_CALL_STATE:
 			return {
@@ -64,6 +70,7 @@ const CallReducer = (state: CallState = callInitialState, action: ICallAction) :
 				callState: CallStates.CALL_AVAILABLE,
 				// localStream: null,
 				remoteStream: null,
+				screenSharingStream: null,
 				isScreenSharing: false,
 				isCameraEnabled: true,
 				isMicrophoneEnabled: true,
@@ -74,16 +81,5 @@ const CallReducer = (state: CallState = callInitialState, action: ICallAction) :
 			return state;
 	}
 }
-
-/*
-
-  SET_LOCAL_STREAM = 'SET_LOCAL_STREAM',
-  SET_REMOTE_STREAM = 'SET_REMOTE_STREAM',
-  SET_CALL_STATE = 'SET_CALL_STATE',
-  SET_CAMERA_ENABLED = 'SET_CAMERA_ENABLED',
-  SET_MICROPHONE_ENABLED = 'SET_MICROPHONE_ENABLED',
-  SET_SCREENSHARING_ENABLED = 'SET_SCREENSHARING_ENABLED',
-  SET_NAME_OF_CALLER = 'SET_NAME_OF_CALLER',
-  RESET_CALL_STATE = 'RESET_CALL_STATE'*/
 
 export default CallReducer;

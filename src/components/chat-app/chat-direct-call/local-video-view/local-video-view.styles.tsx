@@ -3,7 +3,7 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 const localVideoViewStyles = makeStyles((theme: Theme) =>
 createStyles({
   localVideoContainer: {
-    backgroundColor: 'red',
+    backgroundColor: 'black',
     width: '200px',
     height: '150px',
     borderRadius: '5px',

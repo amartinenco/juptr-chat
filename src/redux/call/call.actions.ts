@@ -10,6 +10,11 @@ export const setRemoteStream = (remoteStream: MediaStream) => ({
   payload: remoteStream
 });
 
+export const setScreenSharingStream = (screenSharingStream: MediaStream) => ({
+  type: CallActionTypes.SET_SCREENSHARING_STREAM,
+  payload: screenSharingStream
+});
+
 export const setCallState = (callState: CallStates) => ({
   type: CallActionTypes.SET_CALL_STATE,
   payload: callState

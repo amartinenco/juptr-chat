@@ -11,19 +11,14 @@ import RemoteVideoView from './remote-video-view/remote-video-view.component';
 
 const ChatDirectCall: React.FC = () => {
   const classes = chatDirectCallStyles();
+  const user = useSelector((state: RootState) => state.user.user);
+  const localStream = useSelector((state: RootState) => state.call.localStream);
   const remoteStream = useSelector((state: RootState) => state.call.remoteStream);
   const callState = useSelector((state: RootState) => state.call.callState);
   const name = useSelector((state: RootState) => state.call.name);
-  // const callDialog = useSelector((state: RootState) => state.call.showCallDialog);
-
-  // const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   if (!remoteStream && callState === CallStates.CALL_IN_PROGRESS) {
-  //     //RESET_CALL_STATE
-  //     dispatch(resetCallState());
-  //   }
-  // }, [remoteStream, callState]); 
+  const isScreenSharing = useSelector((state: RootState) => state.call.isScreenSharing);
+  const isCameraEnabled = useSelector((state: RootState) => state.call.isCameraEnabled);
+  const isMicrophoneEnabled = useSelector((state: RootState) => state.call.isMicrophoneEnabled);
 
   return (
     <div className={classes.root}>
@@ -31,13 +26,23 @@ const ChatDirectCall: React.FC = () => {
       {callState === CallStates.CALL_REQUESTED ?
         <CallDialog name={name} />: null
       }
-
-      {/* <CallDialog name={'asdasdasdasdaasdasdasdasdasdasdasdasdasd'} isCalling={true}/> */}
       <div className={remoteStream && callState === CallStates.CALL_IN_PROGRESS ? classes.talking : classes.pending} >
-      {/* <RemoteVideoView /> */}
-        {/* {remoteStream && callState === CallStates.CALL_IN_PROGRESS ? <RemoteVideoView /> : null } */}
-        {remoteStream && callState === CallStates.CALL_IN_PROGRESS ? <ConversationButtons /> : null }
-        {remoteStream && callState === CallStates.CALL_IN_PROGRESS ? <RemoteVideoView /> : null}
+        {user && callState === CallStates.CALL_IN_PROGRESS ? 
+          <ConversationButtons 
+            currentUser={user}
+            targetUserId={name}
+            localStream={localStream}
+            // remoteStream={remoteStream}
+            isScreenSharing={isScreenSharing}
+            isCameraEnabled={isCameraEnabled}
+            isMicrophoneEnabled={isMicrophoneEnabled}
+          /> 
+          : null 
+        }
+        {remoteStream && callState === CallStates.CALL_IN_PROGRESS ? <RemoteVideoView /> : 
+        
+        null
+        }
       </div>
     </div>
   );
