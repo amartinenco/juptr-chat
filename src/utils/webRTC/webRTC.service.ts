@@ -287,7 +287,8 @@ const shareScreenTeardown = (activeConnection: RTCPeerConnection | undefined) =>
 
 export const connectionTeardown = () => {
   store.dispatch(resetCallState());
-  
+  let activeConnection = getActiveConnection();
+  shareScreenTeardown(activeConnection);
   if (callerConnection) {
     callerConnection.close();
   } 

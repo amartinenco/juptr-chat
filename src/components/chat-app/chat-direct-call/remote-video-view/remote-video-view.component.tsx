@@ -11,6 +11,8 @@ const RemoteVideoView: React.FC = () => {
 
   useEffect(() => {
     if (remoteStream) {
+      console.log('REMOTE STREAM', remoteStream);
+      console.log('TRACKS', remoteStream.getTracks());
       const remoteVideo = remoteVideoRef.current;
       if (remoteVideo) {
         remoteVideo.srcObject = remoteStream;
