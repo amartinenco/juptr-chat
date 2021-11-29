@@ -7,7 +7,15 @@ export type CallState = {
   isCameraEnabled: boolean,
   isMicrophoneEnabled: boolean,
   name: string,
-  showCallDialog: IDialogType
+  showCallDialog: IDialogType,
+  lastTextMessage: ITextMessage | undefined,
+  textMessages: ITextMessage[],
+}
+
+export interface ITextMessage {
+  message: string,
+  from: string,
+  date: Date | undefined;
 }
 
 export interface IDialogType {
@@ -32,5 +40,7 @@ export enum CallActionTypes {
   SET_SCREENSHARING_ENABLED = 'SET_SCREENSHARING_ENABLED',
   SET_NAME_OF_CALLER = 'SET_NAME_OF_CALLER',
   RESET_CALL_STATE = 'RESET_CALL_STATE',
-  SHOW_CALL_DIALOG = 'SHOW_CALL_DIALOG'
+  SHOW_CALL_DIALOG = 'SHOW_CALL_DIALOG',
+  SET_LAST_TEXT_MESSAGE = 'SET_LAST_TEXT_MESSAGE',
+  NEW_TEXT_MESSAGE = 'NEW_TEXT_MESSAGE'
 }

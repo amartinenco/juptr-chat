@@ -14,11 +14,23 @@ export const callInitialState : CallState = {
   isCameraEnabled: true,
   isMicrophoneEnabled: true,
   name: '',
-	showCallDialog: { show: false }
+	showCallDialog: { show: false },
+	lastTextMessage: undefined,
+	textMessages: []
 }
 
 const CallReducer = (state: CallState = callInitialState, action: ICallAction) : CallState => {
 	switch (action.type) {
+		case CallActionTypes.SET_LAST_TEXT_MESSAGE:
+			return {
+				...state,
+        lastTextMessage: action.payload
+			};
+		case CallActionTypes.NEW_TEXT_MESSAGE:
+				return {
+					...state,
+					textMessages: [...state.textMessages, action.payload]
+				};
 		case CallActionTypes.SET_LOCAL_STREAM:
 			return {
 				...state,
@@ -76,6 +88,8 @@ const CallReducer = (state: CallState = callInitialState, action: ICallAction) :
 				isMicrophoneEnabled: true,
 				name: '',
 				showCallDialog: { show: false },
+				lastTextMessage: undefined,
+				textMessages: []
 			}
 		default:
 			return state;

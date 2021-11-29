@@ -1,4 +1,4 @@
-import { resetCallState, setLocalStream, setRemoteStream, setScreenSharingEnabled, setScreenSharingStream } from '../../redux/call/call.actions';
+import { resetCallState, setNewTextMessage, setLocalStream, setRemoteStream, setScreenSharingEnabled, setScreenSharingStream } from '../../redux/call/call.actions';
 import store from '../../redux/store';
 import { sendICECandidates, sendWebRTCAnswer, sendWebRTCOffer, terminateConversation } from '../webSocketConnection/webSocketConnection.service';
 import { IWebRTCAnswer, IWebRTCIceCandidate, IWebRTCOffer } from './webRTC.types';
@@ -37,7 +37,10 @@ const constraints = {
 }
 
 let callerConnection : RTCPeerConnection;
+// let callerDataChannel : RTCDataChannel;
+
 let receiverConnection : RTCPeerConnection;
+let dataChannel : RTCDataChannel;
 
 // const retryButWithAudioOnly = () => {
 //   navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
@@ -75,6 +78,8 @@ export const call = (callTo: string) => {
 
 const invite = () => {
   callerConnection = new RTCPeerConnection(configuration);
+  dataChannel = callerConnection.createDataChannel("messenger");
+
   const localStream = store.getState().call.localStream;
 
   if (localStream) {
@@ -84,7 +89,25 @@ const invite = () => {
   }
   callerConnection.ontrack = ({ streams: [stream] }) => {
     store.dispatch(setRemoteStream(stream));
-  } 
+  }
+
+  // messenger
+  callerConnection.ondatachannel = (event) => {
+    const dataChannel = event.channel;
+
+    dataChannel.onopen = () => {
+      console.log('Data channel established connection');
+    }
+
+    dataChannel.onmessage = (event) => {
+      const message = String(event.data);
+      store.dispatch(setNewTextMessage({
+        message: message,
+        from: 'other',
+        date: new Date()
+      }));
+    }
+  }
 }
 
 const handleNegotiationNeededEvent = (callFrom: string, callTo: string) => {
@@ -132,6 +155,7 @@ export const handleReceivedWebRTCOffer = async (data : IWebRTCOffer) => {
   const answerFrom = store.getState().user.user?.displayName;
   if (data && data.sdp && answerFrom) {
     receiverConnection = new RTCPeerConnection(configuration);
+    dataChannel = receiverConnection.createDataChannel("messenger");
 
     const localStream = store.getState().call.localStream;
     if (localStream) {
@@ -163,6 +187,24 @@ export const handleReceivedWebRTCOffer = async (data : IWebRTCOffer) => {
           type: 'to_caller',
           candidate: event.candidate
         });
+      }
+    }
+
+    // messenger 
+    receiverConnection.ondatachannel = (event) => {
+      const dataChannel = event.channel;
+  
+      dataChannel.onopen = () => {
+        console.log('Data channel established connection');
+      }
+  
+      dataChannel.onmessage = (event) => {
+        const message = String(event.data);
+        store.dispatch(setNewTextMessage({
+          message: message,
+          from: 'other',
+          date: new Date()
+        }));
       }
     }
   }
@@ -262,6 +304,18 @@ const getActiveConnection = () => {
   return activeConnection;
 }
 
+export const sendTextMessage = (messageToSend: string) => {
+  if (dataChannel && dataChannel.readyState === 'open' && messageToSend) {
+    const message = String(messageToSend);
+    dataChannel.send(message);
+    store.dispatch(setNewTextMessage({
+      message: message,
+      from: 'me',
+      date: new Date()
+    }));
+  }
+}
+
 const shareScreenTeardown = (activeConnection: RTCPeerConnection | undefined) => {
   let localStream = store.getState().call.localStream;
   let screenSharingStream = store.getState().call.screenSharingStream;
@@ -294,5 +348,8 @@ export const connectionTeardown = () => {
   } 
   if (receiverConnection) {
     receiverConnection.close();
+  }
+  if (dataChannel) {
+    dataChannel.close();
   }
 }

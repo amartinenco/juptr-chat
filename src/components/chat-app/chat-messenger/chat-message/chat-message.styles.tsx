@@ -5,24 +5,23 @@ createStyles({
   messageArea: {
     display: 'flex',
     width: '100%',
-    overflowY: 'auto'
+    overflowY: 'auto',
+    overflowX: 'hidden'
   },
   message: {
-    border: "0.5px solid black",
     borderRadius: "10px",
+    boxShadow: '2px 2px 2px 1px rgba(0, 0, 0, 0.3)',
     margin: "5px",
     padding: "10px",
     display: "inline-block",
     minWidth: "100px",
     maxWidth: "250px",
-
-    "&.fromOther $fromOther": {
-      backgroundColor: '#c77708'
-    },
+    color: 'whitesmoke',
+    wordWrap: 'break-word'
+        // "&.fromOther $fromOther": {
+    //   backgroundColor: '#c77708',
+    // },
   },
-  // fromOther: {
-  //   color: '#4CAF50'
-  // },
   right: {
     justifyContent: 'flex-end !important',
   },
@@ -32,21 +31,7 @@ createStyles({
   byWho: {
     overflow: 'hidden',
     whiteSpace: 'nowrap',
-    // display: 'inline-block',
     textOverflow: 'ellipsis',
-    // width: '100px'
-    // display: 'block',    
-    // paddingTop: '6px',
-    // fontSize: '13px',
-    // color: '#666', 
-    // textOverflow: 'ellipsis',
-    // whiteSpace: 'nowrap',
-    // overflow: 'hidden',
-    // width: '50px'
-    // overflow: 'hidden',
-    // whiteSpace: 'nowrap',
-    // textOverflow: 'ellipsis',
-    // inlineSize: '150px' 
   }
 }),
 );

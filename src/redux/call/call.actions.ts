@@ -1,4 +1,4 @@
-import { CallActionTypes, CallStates, IDialogType } from './call.types';
+import { CallActionTypes, CallStates, IDialogType, ITextMessage } from './call.types';
 
 export const setLocalStream = (localStream: MediaStream) => ({
   type: CallActionTypes.SET_LOCAL_STREAM,
@@ -47,4 +47,14 @@ export const showCallDialog = (showCallDialog: IDialogType) => ({
 export const setCallerName = (name: string) => ({
   type: CallActionTypes.SET_NAME_OF_CALLER,
   payload: name
+});
+
+export const setLastTextMessage = (lastTextMessage: ITextMessage) => ({
+  type: CallActionTypes.SET_LAST_TEXT_MESSAGE,
+  payload: lastTextMessage
+});
+
+export const setNewTextMessage = (newTextMessage: ITextMessage) => ({
+  type: CallActionTypes.NEW_TEXT_MESSAGE,
+  payload: newTextMessage
 });
