@@ -9,7 +9,7 @@ import { setUpLocalStream } from '../../utils/webRTC/webRTC.service';
 import { connectWithWebSocket, disconnectWebSocket } from '../../utils/webSocketConnection/webSocketConnection.service';
 import chatStyles from './chat.styles';
 
-const Chat: React.FC = () => {
+const Chat: React.FC = React.memo(() => {
 
   const classes = chatStyles();
 
@@ -41,5 +41,6 @@ const Chat: React.FC = () => {
     </div>
   );
 }
+);
 
 export default Chat;

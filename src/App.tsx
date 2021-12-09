@@ -24,6 +24,18 @@ const App: React.FC = () => {
     // }
   });
 
+  // useEffect(()=>{
+  //   let sessionInterval = setInterval(() => {
+  //     dispatch(checkUserSessionStart());
+  //     },
+  //     1000
+  //   );
+
+  //   return () => {
+  //     clearInterval(sessionInterval);
+  //   }
+  // },[dispatch]);
+
   useEffect(()=>{
     dispatch(checkUserSessionStart());
   },[dispatch]);

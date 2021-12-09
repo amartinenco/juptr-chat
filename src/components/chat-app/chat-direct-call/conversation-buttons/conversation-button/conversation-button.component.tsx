@@ -5,7 +5,7 @@ interface Props {
   onClickHandler: () => void;
 }
 
-const ConversationButton: React.FC<Props> = (props) => {
+const ConversationButton: React.FC<Props> = React.memo((props) => {
   const onClickHandler = props.onClickHandler;
   const classes = conversationButtonStyles();
 
@@ -15,5 +15,6 @@ const ConversationButton: React.FC<Props> = (props) => {
     </button>
   );
 }
+);
 
 export default ConversationButton;

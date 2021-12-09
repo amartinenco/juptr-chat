@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../../redux/store';
 import localVideoViewStyles from './local-video-view.styles';
 
-const LocalVideoView: React.FC = () => {
+const LocalVideoView: React.FC = React.memo(() => {
   const classes = localVideoViewStyles();
   const localStream = useSelector((state: RootState) => state.call.localStream);
   const screenSharingStream = useSelector((state: RootState) => state.call.screenSharingStream);
@@ -38,5 +38,6 @@ const LocalVideoView: React.FC = () => {
     </div>
   );
 }
+);
 
 export default LocalVideoView;

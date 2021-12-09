@@ -25,7 +25,7 @@ interface Props {
   isMicrophoneEnabled : boolean
 }
 
-const ConversationButtons: React.FC<Props> = (props) => {
+const ConversationButtons: React.FC<Props> = React.memo((props) => {
   const dispatch = useDispatch();
   const classes = conversationButtonsStyles();
   const currentUser = props.currentUser;
@@ -88,5 +88,6 @@ const ConversationButtons: React.FC<Props> = (props) => {
     </div>
   )
 }
+);
 
 export default ConversationButtons;

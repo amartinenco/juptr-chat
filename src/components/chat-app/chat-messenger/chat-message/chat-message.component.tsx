@@ -8,7 +8,7 @@ interface Props {
   name: string | undefined, 
 }
 
-const ChatMessage: React.FC<Props> = (props) => {
+const ChatMessage: React.FC<Props> = React.memo((props) => {
   const classes = chatMessageStyles();
   const messagePayload = props.message;
   const otherUserName = props.name;
@@ -38,5 +38,6 @@ const ChatMessage: React.FC<Props> = (props) => {
     </ListItem>
   );
 }
+);
 
 export default ChatMessage;

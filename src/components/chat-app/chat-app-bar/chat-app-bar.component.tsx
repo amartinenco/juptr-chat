@@ -16,6 +16,7 @@ const ChatAppBar: React.FC = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
+
   const dispatch = useDispatch();
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {

@@ -11,7 +11,7 @@ interface Props {
   busyUsers: string[],
 }
 
-const ChatUserList: React.FC<Props> = (props) => {
+const ChatUserList: React.FC<Props> = React.memo((props) => {
   const classes = chatUsersList();
 
   const filteredUsers = props.filteredUsers;
@@ -41,5 +41,6 @@ const ChatUserList: React.FC<Props> = (props) => {
   </div>
   );
 }
+);
 
 export default ChatUserList;

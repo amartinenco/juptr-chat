@@ -7,7 +7,7 @@ import { RootState } from '../../../redux/store';
 import ChatUserItem from './chat-user-item/chat-user-item.component';
 import ChatUserList from './chat-user-list/chat-user-list.component';
 
-const ChatUsers: React.FC = () => {
+const ChatUsers: React.FC = React.memo(() => {
   const user = useSelector((state: RootState) => state.user.user);
   const activeUsers = useSelector((state: RootState) => state.chat.activeUsers);
   const busyUsers = useSelector((state: RootState) => state.chat.busyUsers);
@@ -47,5 +47,6 @@ const ChatUsers: React.FC = () => {
     </React.Fragment>
   );
 }
+);
 
 export default ChatUsers;

@@ -8,7 +8,7 @@ import ConversationButtons from './conversation-buttons/conversation-buttons.com
 import LocalVideoView from './local-video-view/local-video-view.component';
 import RemoteVideoView from './remote-video-view/remote-video-view.component';
 
-const ChatDirectCall: React.FC = () => {
+const ChatDirectCall: React.FC = React.memo(() => {
   const classes = chatDirectCallStyles();
   const user = useSelector((state: RootState) => state.user.user);
   const localStream = useSelector((state: RootState) => state.call.localStream);
@@ -45,5 +45,6 @@ const ChatDirectCall: React.FC = () => {
     </div>
   );
 }
+);
 
 export default ChatDirectCall;
