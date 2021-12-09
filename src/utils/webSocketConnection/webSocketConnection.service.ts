@@ -1,8 +1,7 @@
 import socketClient, { Socket } from 'socket.io-client';
-import { signOutStart } from '../../redux/auth/auth.actions';
 import { setCallerName, setCallState, showCallDialog } from '../../redux/call/call.actions';
 import { CallStates } from '../../redux/call/call.types';
-import { setActiveUsers } from '../../redux/chat/chat.actions';
+import { setActiveUsers, setAvailableUsers, setBusyUsers } from '../../redux/chat/chat.actions';
 import store from '../../redux/store';
 import ILoggedIn from '../../types/logged-in.interface';
 import { call, connectionTeardown, handleReceivedAnswer, handleReceivedICECandidate, handleReceivedWebRTCOffer } from '../webRTC/webRTC.service';
@@ -91,6 +90,14 @@ const broadcastHandler = (data: IBroadcastData) => {
     case BROADCAST.ACTIVE_USERS:
       const activeUsers = data.payload;
       store.dispatch(setActiveUsers(activeUsers));
+      break;
+    case BROADCAST.USERS_AVAILABLE:
+      const availableUsers = data.payload;
+      store.dispatch(setAvailableUsers(availableUsers));
+      break;
+    case BROADCAST.USERS_BUSY: 
+      const busyUsers = data.payload;
+      store.dispatch(setBusyUsers(busyUsers));
       break;
     default:
       break;

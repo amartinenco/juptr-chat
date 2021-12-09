@@ -6,7 +6,6 @@ import remoteVideoViewStyles from './remote-video-view.styles';
 const RemoteVideoView: React.FC = () => {
   const classes = remoteVideoViewStyles();
   const remoteStream = useSelector((state: RootState) => state.call.remoteStream);
-  // const remoteStream = null;
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {

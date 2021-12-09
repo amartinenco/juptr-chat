@@ -18,9 +18,6 @@ createStyles({
     maxWidth: "250px",
     color: 'whitesmoke',
     wordWrap: 'break-word'
-        // "&.fromOther $fromOther": {
-    //   backgroundColor: '#c77708',
-    // },
   },
   right: {
     justifyContent: 'flex-end !important',

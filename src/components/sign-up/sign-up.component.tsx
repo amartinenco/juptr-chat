@@ -15,8 +15,6 @@ import { RootState } from '../../redux/store';
 import { clearAuthErrors, registrationStart } from '../../redux/auth/auth.actions';
 
 import Alert from '@material-ui/lab/Alert';
-// import { registerUser, resetErrors } from '../../contexts/auth.actions';
-// import { useAuthDispatch, useAuthState } from '../../contexts/auth.context';
 
 const resetCredentials = {
     email: '',
@@ -36,9 +34,6 @@ const SignUp: React.FC<RouteComponentProps<any>> = ({ history }) => {
     const loading = useSelector((state : RootState) => state.user.loading);
     const dispatch = useDispatch();
 
-    // const dispatch = useAuthDispatch();
-	// const { errorMessage } = useAuthState();
-
     useEffect(()=>{
         dispatch(clearAuthErrors());
     },[dispatch]);
@@ -47,7 +42,6 @@ const SignUp: React.FC<RouteComponentProps<any>> = ({ history }) => {
         if (errorMessage && errorMessage.length > 0) {
             let err:any = {};
             errorMessage.forEach((errObj:any, i:any) => {
-                // console.log(errObj);
                 if (errObj.param) {
                     err[errObj.param!] = errObj.msg!;
                 }
@@ -113,13 +107,6 @@ const SignUp: React.FC<RouteComponentProps<any>> = ({ history }) => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-		// try {
-		//     let response = await registerUser(dispatch, { email, displayName, fullName, password, confirmPassword });
-        //     if (!response?.data.displayName) return;
-        //     history.push('/signin');
-		// } catch (error: any) {
-		// 	// console.log(error);
-		// }
         dispatch(registrationStart({ email, displayName, fullName, password, confirmPassword }));
     }
 

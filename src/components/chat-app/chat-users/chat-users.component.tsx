@@ -1,22 +1,16 @@
 import React, { useState } from 'react';
-import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import TextField from '@material-ui/core/TextField';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
-import ILoggedIn from '../../../types/logged-in.interface';
 import ChatUserItem from './chat-user-item/chat-user-item.component';
-import chatUsersStyles from './chat-users.styles';
+import ChatUserList from './chat-user-list/chat-user-list.component';
 
 const ChatUsers: React.FC = () => {
-  const classes = chatUsersStyles();
   const user = useSelector((state: RootState) => state.user.user);
   const activeUsers = useSelector((state: RootState) => state.chat.activeUsers);
+  const busyUsers = useSelector((state: RootState) => state.chat.busyUsers);
   const [searchField, setSearchField] = useState('');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,7 +24,7 @@ const ChatUsers: React.FC = () => {
 
   return (
     <React.Fragment>
-      <ChatUserItem displayName={user?.displayName} fullName={user?.fullName} key={'currentUser'} />
+      <ChatUserItem displayName={user?.displayName} fullName={user?.fullName} key={'currentUser'} self={true} busy={true} />
       <Divider />
       <Grid item xs={12} style={{padding: '10px'}}>
         <TextField 
@@ -45,20 +39,11 @@ const ChatUsers: React.FC = () => {
           />
       </Grid>
       <Divider />
-      <List>
-        {
-          (activeUsers.length <= 1)?
-          <ListItem button key={'no_users'}>
-            <ListItemText>
-              No users online
-            </ListItemText> 
-          </ListItem>
-          :
-          filteredUsers.filter((activeUser) => activeUser !== user?.displayName).map((activeUser, index) => 
-            <ChatUserItem displayName={activeUser} key={index} from={user?.displayName}/>
-          )
-        }
-      </List>
+      {
+      user ? 
+        <ChatUserList user={user} filteredUsers={filteredUsers} activeUsers={activeUsers} busyUsers={busyUsers}/> //availableUsers={availableUsers}/>
+        : "You must be logged in"
+      }
     </React.Fragment>
   );
 }

@@ -1,5 +1,4 @@
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import { maxWidth } from "@material-ui/system";
 
 const chatDirectCallStyles = makeStyles((theme: Theme) =>
 createStyles({
@@ -8,9 +7,6 @@ createStyles({
     position: 'relative'
   },
   talking: {
-    // display: "flex",
-    // justifyContent: "center",
-    // alignItems: "center",
     backgroundColor: 'black',
   },
   pending: {

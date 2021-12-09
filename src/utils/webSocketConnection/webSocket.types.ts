@@ -1,5 +1,7 @@
 export enum BROADCAST {
-  ACTIVE_USERS = 'ACTIVE_USERS'
+  ACTIVE_USERS = 'ACTIVE_USERS',
+  USERS_AVAILABLE = 'USERS_AVAILABLE',
+  USERS_BUSY = 'USERS_BUSY'
 };
 
 export interface IBroadcastData {

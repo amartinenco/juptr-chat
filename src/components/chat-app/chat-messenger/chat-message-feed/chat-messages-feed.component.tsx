@@ -17,7 +17,6 @@ const ChatMessagesFeed: React.FC<Props> = (props) => {
   const user = useSelector((state: RootState) => state.user.user);
 
   useEffect(() => {
-    // console.log('added');
     textMessagesRef.current?.scrollIntoView({ behavior: 'smooth'});
   }, [textMessages]);
 

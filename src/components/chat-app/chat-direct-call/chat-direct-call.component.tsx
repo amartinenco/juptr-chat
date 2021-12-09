@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { resetCallState } from '../../../redux/call/call.actions';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { CallStates } from '../../../redux/call/call.types';
 import { RootState } from '../../../redux/store';
 import CallDialog from './call-dialog/call-dialog.component';
@@ -32,7 +31,6 @@ const ChatDirectCall: React.FC = () => {
             currentUser={user}
             targetUserId={name}
             localStream={localStream}
-            // remoteStream={remoteStream}
             isScreenSharing={isScreenSharing}
             isCameraEnabled={isCameraEnabled}
             isMicrophoneEnabled={isMicrophoneEnabled}

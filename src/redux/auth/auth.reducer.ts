@@ -1,5 +1,3 @@
-import IResponseError from '../../types/error.interface';
-import ILoggedIn from '../../types/logged-in.interface';
 import {AuthActionTypes, AuthState } from './auth.types';
 
 interface IAuthAction {

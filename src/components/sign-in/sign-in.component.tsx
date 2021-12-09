@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { Button, Grid, InputAdornment, TextField, Link } from '@material-ui/core';
+import { Button, InputAdornment, TextField } from '@material-ui/core';
 import { Link as RouterLink, RouteComponentProps, withRouter } from 'react-router-dom';
 import { AccountCircle, LockRounded } from '@material-ui/icons';
 import Typography from '@material-ui/core/Typography';
@@ -11,12 +11,8 @@ import { ReactComponent as JuptrLogo } from '../../assets/logo.svg';
 import signInStyles from './sign-in.styles';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { AuthState } from '../../redux/auth/auth.types';
 import { RootState } from '../../redux/store';
 import { clearAuthErrors, signInStart } from '../../redux/auth/auth.actions';
-
-// import { useAuthDispatch, useAuthState } from '../../contexts/auth.context';
-// import { loginUser, resetErrors } from '../../contexts/auth.actions';
 
 const SignIn: React.FC<RouteComponentProps<any>> = ({ history }) => {
     const [errors, setErrors] = React.useState<{ email: string, password: string }>({ email: '', password: '' });
@@ -26,9 +22,6 @@ const SignIn: React.FC<RouteComponentProps<any>> = ({ history }) => {
     const errorMessage = useSelector((state : RootState) => state.user.errorMessage);
     const loading = useSelector((state : RootState) => state.user.loading);
     const dispatch = useDispatch();
-
-	// const dispatch = useAuthDispatch();
-	// const { loading, errorMessage } = useAuthState();
 
     useEffect(()=>{
         dispatch(clearAuthErrors());
@@ -57,13 +50,6 @@ const SignIn: React.FC<RouteComponentProps<any>> = ({ history }) => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-		// try {
-		//     let response = await loginUser(dispatch, { email, password });
-		// 	if (!response?.data.displayName) return;
-        //     history.push('/chat-app');
-		// } catch (error: any) {
-		// 	console.log(error);
-		// }
         dispatch(signInStart(userCredentials));
     }
 
@@ -136,13 +122,6 @@ const SignIn: React.FC<RouteComponentProps<any>> = ({ history }) => {
                 >
                     Register
                 </Button>
-                {/* <Grid container>
-                    <Grid item xs>
-                        <Link component={RouterLink} to="/password_reset" variant="body2">
-                            {"Forgot password?"}
-                        </Link>
-                    </Grid>
-                </Grid> */}
             </form>
         </div>
     );

@@ -19,7 +19,7 @@ const ChatMessagesBox: React.FC<Props> = (props) => {
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = event.target;
+    const { value } = event.target;
     setTextMessage(message => ({ message: value }));
   };
 

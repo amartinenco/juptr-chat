@@ -1,20 +1,20 @@
-import { ListItem, ListItemIcon, Avatar, ListItemText } from '@material-ui/core';
+import { ListItem, ListItemIcon, Avatar, ListItemText, Button } from '@material-ui/core';
 import React from 'react';
-import { call } from '../../../../utils/webRTC/webRTC.service';
 import { callAttempt } from '../../../../utils/webSocketConnection/webSocketConnection.service';
-// import { createConnection } from '../../../../utils/webRTC/webRTC.service';
+import { OnlineBadge, BusyBadge } from './chat-user-item.styles';
 
 interface Props {
   displayName: string | undefined;
   fullName?: string | undefined;
   from?: string | undefined;
+  self: boolean;
+  busy: boolean;
 }
 
-const ChatUserItem: React.FC<Props> = ({ displayName, fullName, from } : Props) => {
+const ChatUserItem: React.FC<Props> = ({ displayName, fullName, from, self, busy } : Props) => {
 
   const callSomeone = (event: React.MouseEvent<HTMLElement>) => {
   if (displayName && from) {
-    // call(displayName);
     callAttempt({
       name: from,
       target: displayName,
@@ -32,17 +32,44 @@ const ChatUserItem: React.FC<Props> = ({ displayName, fullName, from } : Props) 
             }}>
       <ListItem button key={displayName}>
         <ListItemIcon>
-        <Avatar alt={displayName} src="#" />
+
+          {!self ?
+             busy ?
+            <BusyBadge
+            overlap="circular"
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+            variant="dot"
+            >
+              <Avatar alt={displayName} src="#" />
+            </BusyBadge>
+            :
+            <OnlineBadge
+              overlap="circular"
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}
+              variant="dot"
+              >
+              <Avatar alt={displayName} src="#" />
+            </OnlineBadge> 
+            :
+            <Avatar alt={displayName} src="#" />
+          }
+
         </ListItemIcon>
         <ListItemText primary={ displayName }></ListItemText> 
-        {/* { fullName ? 
-          <ListItemText primary={ displayName + " (" + fullName + ")"} 
-          
-          ></ListItemText> 
-          :
-          <ListItemText primary={ displayName }></ListItemText> 
-        } */}
-        <button onClick={callSomeone}>Call</button>
+
+        { !self && !busy ? 
+          <Button variant="contained" 
+          onClick={callSomeone}
+          >
+          Call
+          </Button> : null
+        }
       </ListItem>
     </div>
   </React.Fragment>

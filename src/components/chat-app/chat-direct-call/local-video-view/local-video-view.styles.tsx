@@ -10,8 +10,6 @@ createStyles({
     position: 'absolute',
     top: '10%',
     right: '10%',
-    // right: '35%',
-    // transform: 'translateX(10%)',
   },
   videoElement: {
     width: '100%',

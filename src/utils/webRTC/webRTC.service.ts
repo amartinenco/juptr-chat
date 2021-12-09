@@ -37,30 +37,19 @@ const constraints = {
 }
 
 let callerConnection : RTCPeerConnection;
-// let callerDataChannel : RTCDataChannel;
 
 let receiverConnection : RTCPeerConnection;
 let dataChannel : RTCDataChannel;
-
-// const retryButWithAudioOnly = () => {
-//   navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-//     store.dispatch(setLocalStream(stream));
-//   }).catch(error => {
-//     console.error('Local stream audio failed', error);
-//   });
-// }
 
 export const setUpLocalStream = () => {
   navigator.mediaDevices.getUserMedia(constraints).then(stream => {
     store.dispatch(setLocalStream(stream));
   }).catch(error => {
     console.error('Local stream with video/audio failed', error);
-    // retryButWithAudioOnly();
   });
 }
 
 // Caller side
-
 export const call = (callTo: string) => {
   const callFrom = store.getState().user.user?.displayName;
   if (callFrom) {
@@ -233,8 +222,6 @@ export const handleReceivedICECandidate = async (data: IWebRTCIceCandidate) => {
 }
 
 export const switchToScreenSharing = (enable: boolean) => {
-  const localStream = store.getState().call.localStream;
-
   if (enable) {
     let activeConnection = getActiveConnection();
     if (activeConnection) {
@@ -245,15 +232,6 @@ export const switchToScreenSharing = (enable: boolean) => {
       }).then((stream : MediaStream) => {
         if (activeConnection) {
           // determine the video track sender
-          // if (localStream?.getVideoTracks().length === 0) {
-          //   for (const track of stream.getTracks()) {
-          //     activeConnection.addTrack(track, stream);
-          //   }
-          //   // for (const track of localStream.getTracks()) {
-          //   //   activeConnection.addTrack(track, stream);
-          //   // }
-          // }
-
           const senders = activeConnection.getSenders();      
           console.log('SENDERS', senders);
           console.log('Video track', stream.getVideoTracks());
@@ -319,11 +297,13 @@ export const sendTextMessage = (messageToSend: string) => {
 const shareScreenTeardown = (activeConnection: RTCPeerConnection | undefined) => {
   let localStream = store.getState().call.localStream;
   let screenSharingStream = store.getState().call.screenSharingStream;
+  let isScreenSharing = store.getState().call.isScreenSharing;
+
   if (activeConnection && localStream) {
     const senders = activeConnection.getSenders();
     // const sender = senders.find(sender => sender.track!.kind === localStream!.getVideoTracks()[0].kind);
     const sender = senders.find(sender => {
-      if (sender.track) { return sender.track!.kind === "video"}
+      if (sender.track) { return sender.track!.kind === "video"} else return null;
     });
     if (sender) {
       sender.track?.stop();
@@ -334,15 +314,20 @@ const shareScreenTeardown = (activeConnection: RTCPeerConnection | undefined) =>
     }
     store.dispatch(setScreenSharingEnabled(false));
   }
-  if (screenSharingStream) {
+  if (screenSharingStream && isScreenSharing) {
     screenSharingStream.getTracks().forEach(track => track.stop());
   }
+  // setUpLocalStream();
 }
 
 export const connectionTeardown = () => {
-  store.dispatch(resetCallState());
   let activeConnection = getActiveConnection();
-  shareScreenTeardown(activeConnection);
+  let isScreenSharing = store.getState().call.isScreenSharing;
+  if (isScreenSharing) {
+    shareScreenTeardown(activeConnection);
+  }
+  store.dispatch(resetCallState());
+
   if (callerConnection) {
     callerConnection.close();
   } 
